@@ -29,6 +29,7 @@ cp ../Data/Original/French.zip Data/.
 unzip Data/French.zip
 mv French/* Data/Original/.
 rm -rf French
+rm Data/French.zip
 
 
 """ DEFINING PARAMETERS """
