@@ -14,7 +14,7 @@ def ensure_unique_fileName(file, title, author, fileNames):
 	return fileName
 
 def ensure_well_formed(ta):
-	ta = ta.replace('.','-').replace('/','-').replace(',','').replace('(','-').replace(')','-')
+	ta = ta.replace('.','-').replace('/','-').replace(',','').replace('(','-').replace(')','-').replace("'",'').replace('"','').replace("<",'-').replace('>','-').replace('|','')
 	if 'Machine_readable_text' in ta:
 		ta = None
 	return ta
@@ -32,13 +32,19 @@ for file in fileList:
 			if title == None and '<title' in line and '</title>' in line:
 				if 'Machine_readable_text<-title><author' in line:
 					line = line.split('Machine_readable_text<-title><author')[-1]
-				title = '_'.join(re.search('>(.*)</title>', line).group(1).split())
-				title = ensure_well_formed(title)
+				try:
+					title = '_'.join(re.search('>(.*)</title>', line).group(1).split())
+					title = ensure_well_formed(title)
+				except:
+					title = None
 			if author == None and '<author' in line and '</author>' in line:
 				if 'Machine_readable_text<-title><author' in line:
 					line = line.split('Machine_readable_text<-title><author')[-1]
-				author = '_'.join(re.search('>(.*)</author>', line).group(1).split())
-				author = ensure_well_formed(author)
+				try:
+					author = '_'.join(re.search('>(.*)</author>', line).group(1).split())
+					author = ensure_well_formed(author)
+				except:
+					author = None
 
 		### MAKE UP NEW, INFORMATIVE FILE NAME
 		if title != None and author != None:

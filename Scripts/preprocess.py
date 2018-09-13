@@ -19,9 +19,9 @@ if extension == 'xml':
 
 	""" THE USER SHOULD DEFINE WHAT ANNOTATIONS THEY WANT TO PRESERVE HERE """
 	labelMapping = {}
-	for x in 'place','oronym','building','geographical':
-		segStart = '<name type="'+x+'">'
-		labelMapping[segStart] = '$'
+	# for x in 'place','oronym','building','geographical':
+	# 	segStart = '<name type="'+x+'">'
+	# 	labelMapping[segStart] = '$'
 	segEnd = '</name>'
 	bodyStart = '<p>'
 	bodyStop = '</p>'
