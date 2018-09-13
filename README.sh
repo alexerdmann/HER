@@ -24,8 +24,9 @@ sh Scripts/set_up_work_space.sh $name_of_project
 cd $name_of_project
 # NOW UPLOAD ALL OF YOUR RAW TEXTS THAT YOU WANT TO EXTRACT NAMED ENTITIES FROM to the Data/Original/ folder within your new project directory
 # make sure all such raw texts have either a .txt or .xml extension (preprocessing script may not handle all xml files - check to make sure these run okay)
-# for the sake of example, I will use the texts included with the download.
-cp ../Data/Original/* Data/Original/.
+# for the sake of example, I will use some texts included with the download.
+cp ../Data/Original/French.zip Data/.
+unzip Data/French.zip
 
 
 """ DEFINING PARAMETERS """
@@ -42,7 +43,9 @@ seed_size=200  # Minimum number of sentences to be included in the initial rando
 
 # We also need to determine the algorith that will be used later on to identify other sentences to annotate given trends observed in the random seed.
 sortMethod=hardCappedUNKs  # can also try "rapidEntityDiversity" (if capitalization is not likely to mark named entities in your corpus) or "rapidUncertainty" (which is comparable to "rapidEntityDiversity"), though both perform worse than hardCappedUNKs in languages that use capitalization to mark named entities. You can also use "random" here as a baseline.
-lg=en  # Review the language codes supported by the Moses Tokenizer. They are the suffixes found on the files in Scripts/Moses_Tokenizer/share/nonbreaking_prefixes. The language is only used for tokenization, so if your language is not listed, English is a safe default as the English tokenization scheme does little besides simply separating punctuation.
+lg=fr  # Review the language codes supported by the Moses Tokenizer. They are the suffixes found on the files in Scripts/Moses_Tokenizer/share/nonbreaking_prefixes. The language is only used for tokenization
+	# IF YOUR LANGUAGE IS NOT LISTED, USE en
+	# en is a safe default as the English tokenization scheme does little besides simply separating punctuation.
 
 
 """ STEP 1: PREPARING YOUR TEXTS """ 
