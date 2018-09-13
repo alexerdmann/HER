@@ -1,0 +1,17 @@
+9/13/18
+
+Downloaded Greek and Latin data from Perseus Github Repositories
+	https://github.com/PerseusDL/canonical
+
+Put all the relevant Greek or Latin files in one directory
+	renamed them something sensible
+
+	mkdir GREEK # or LATIN
+	for f in <cloned-greek-perseus-repository>/data/*/*grc*.xml; mv $f DATA/.; done
+		# use lat instead of grc for Latin
+	python Scripts/Perseus_Title_Author_Extractor.sh GREEK/* # or LATIN
+
+	then I divided GREEK and LATIN into two smaller files and compressed them
+		so they were small enough that I could move them to Data/ and upload to Github
+
+
