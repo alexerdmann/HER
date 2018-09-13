@@ -1,17 +1,28 @@
-9/13/18
 
-Downloaded Greek and Latin data from Perseus Github Repositories
-	https://github.com/PerseusDL/canonical
+##############
+9/13/18 - Alex
 
-Put all the relevant Greek or Latin files in one directory
-	renamed them something sensible
+	Downloaded Greek and Latin data from Perseus Github Repositories
+		https://github.com/PerseusDL/canonical
 
-	mkdir GREEK # or LATIN
-	for f in <cloned-greek-perseus-repository>/data/*/*grc*.xml; mv $f DATA/.; done
-		# use lat instead of grc for Latin
-	python Scripts/Perseus_Title_Author_Extractor.sh GREEK/* # or LATIN
+	Put all the relevant Greek or Latin files in one directory
+		renamed them something sensible
 
-	then I divided GREEK and LATIN into two smaller files and compressed them
-		so they were small enough that I could move them to Data/ and upload to Github
+		mkdir GREEK # or LATIN
+		for f in <cloned-greek-perseus-repository>/data/*/*grc*.xml; mv $f DATA/.; done
+			# use lat instead of grc for Latin
+		python Scripts/Perseus_Title_Author_Extractor.sh GREEK/* # or LATIN
 
+		then I divided GREEK and LATIN into two smaller files and compressed them
+			so they were small enough that I could move them to Data/ and upload to Github
+
+	I cloned our AgnosticNER github repository to test it with the new data
+
+		Step 1 in the README will obviously not work well because the MOSES preprocessor doesn't handle Latin or Greek, so we shouldn't run:
+
+		sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 
+
+		but the first command in that Step 1 (python Scripts/preprocess.py <file>) seems to be successfully extracting both Latin and Greek body texts from the xml
+
+			if we find errors with this later, we could try using the beautiful soup package instead
 
