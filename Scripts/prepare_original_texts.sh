@@ -5,7 +5,7 @@ cd Data/Original
 for f in *; do python ../../$preprocessScript $f > ../Preprocessed/$f; done
 
 cd ../Preprocessed
-for f in *; do ../../Scripts/Moses_Tokenizer/tokenizer/tokenizer.perl -l $lg < $f > ../Tokenized/$f; done
+for f in *; do perl ../../Scripts/Moses_Tokenizer/tokenizer/tokenizer.perl -l $lg < $f > ../Tokenized/$f; done
 
 cd ../Tokenized
 for f in *; do python ../../Scripts/prepare4crf.py $f > ../Prepared/$f; done
