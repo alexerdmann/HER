@@ -31,9 +31,17 @@ def getHist(fullCorpus, hist_dest):
 	pickleOut(hist,hist_dest)
 
 def getWordShape(line,corpus,ind):
-	word = line.split()[1]
-	if word[0].isupper():
-		line += '\twordShape=capped'
+	try:
+		word = line.split()[1]
+		if word[0].isupper():
+			if word[-1] == '.':
+				line += '\twordShape=abbrev'
+			elif len(word) > 1 and word[1].isupper():
+				line += '\twordShape=allCaps'
+			else:
+				line += '\twordShape=capped'
+	except IndexError:
+		pass
 	return line
 
 def getWordShapeAdvanced(line,corpus,ind):

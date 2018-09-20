@@ -630,7 +630,63 @@ elif sortBy == 'random':
 	rankedSents = random_sort_and_write_out(corpus, output)
 	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANDOM SENTENCES IN:    {}\n'.format(output))
 
+elif sortBy == 'pretaggedStats':
 
+	nonLexical_features = ' '.join(['wordShape','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats']) # doesn't include: 'charNgrams'
+
+	### generate dummy seed, alwaysTrain, and unannotated corpora
+		# add above nonLexical features
+		# remove the words themselves
+		# normalize all non-0 tags to NE
+	### train one system on the dummy seed + dummy alwaysTrain
+		# test it on unannotated and save the results
+	### train one system on the first half of dummy alwaysTrain, another on the second
+		# test each on the opposite half of dummy alwaysTrain and save the results
+	### align the test outputs to one another and to the original words
+	### UNK unannotated words that were twice labeled as NE get priority 3
+	### UNK unannotated words labeled NE by only dummy seed system get priority 2
+	### UNK unannotated words labeled NE by only pretagged unannotated seed get priority 1
+	### non UNK words get priority 0
+	### multiply sqr rt of words' frequencies by priority to get ranked list of word scores
+	### take the sentence with the highest sum of words scores from its component types
+		# append sentence to ranked sents
+		# reduce word scores to 0 for all words occuring in said sentence
+		# repeat until no word has a positive score
+	### append remaining sentences to ranked sentences
+
+
+
+
+#############################################################################
+
+	# unannotated = unrankedSort(corpus)
+	# seed = unrankedSort(args.seed)
+	# # predictions = unrankedSort(args.predictions)
+	# trainHist = {}
+	# if args.alwaysTrain != None:
+	# 	alwaysTrain = unrankedSort(args.alwaysTrain)
+	# 	trainHist = getHist(alwaysTrain)
+	# seedHist = getHist(seed)
+	# for w in trainHist:
+	# 	if w not in seedHist:
+	# 		seedHist[w] = trainHist[w]
+	# 	else:
+	# 		seedHist[w] += trainHist[w]
+	# ### Get UNKhist and scale so the range is 0-2, controlling for outliers
+	# UNKhist = get_UNKhist(seedHist, unannotated)
+
+	# assert(len(UNKhist) > 0)
+	# UNKhist = normalize_scores(UNKhist, 2)
+
+	# feature_significances, minFeat = get_feature_significances(seed)
+	# feature_significances = normalize_scores(feature_significances, 2)
+
+	# UNKs_to_cells, sents_to_significance_matrix, UNKless, matrix_to_map = get_sent_significances(unannotated, feature_significances, UNKhist, minFeat)
+
+	# rankedSents, limit = REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matrix, matrix_to_map, UNKless, output)
+
+	# print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANKED SENTENCES IN:    {}\n'.format(output))
+	# print('The marginal benefit of annotating an additional sentence will start high and decrease until youve annotated {} sentences, after which, marginal gains will be negligible'.format(str(limit)))
 
 
 
