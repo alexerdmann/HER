@@ -33,25 +33,31 @@ if len(sys.argv) > 2:
 	gazzes = {}
 	gaz2max = {}
 	for gaz in gazatteers:
-		maxLen = 0
-		label = gaz.split('/')[-1].split('.')[0]
-		gazzes[label] = {}
-		for line in fileinput.input(gaz):
-			line = ' '.join(line.split())
-			if len(line.split()) > 0:
-				length = len(line.split())
-				if length not in gazzes:
-					gazzes[label][length] = {}
-				gazzes[label][length][line] = True
-				NEs2labels[line] = label
-				if length > maxLen:
-					maxLen = length
-					gaz2max[gaz] = maxLen
-		fileinput.close()
+		try:
+			maxLen = 0
+			label = gaz.split('/')[-1].split('.')[0]
+			gazzes[label] = {}
+			for line in fileinput.input(gaz):
+				line = ' '.join(line.split())
+				if len(line.split()) > 0:
+					length = len(line.split())
+					if length not in gazzes:
+						gazzes[label][length] = {}
+					gazzes[label][length][line] = True
+					NEs2labels[line] = label
+					if length > maxLen:
+						maxLen = length
+						gaz2max[gaz] = maxLen
+			fileinput.close()
+		except FileNotFoundError:
+			pass
 
 	maxLens = list(gaz2max.values())
 	maxLens.sort(reverse=True)
-	maxLen = maxLens[0]
+	if len(maxLens) > 0:
+		maxLen = maxLens[0]
+	else:
+		maxLen = 0
 
 	for s in range(len(sents)):
 		sent = []
