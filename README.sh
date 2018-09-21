@@ -39,7 +39,7 @@ cp ../Data/Gazatteers/GEO.fr.gaz Data/Gazatteers/GEO.gaz
 """ DEFINING PARAMETERS """
 # We are now ready to start identifying named entities. In order to see efficiently accurately, we need to start by annotating named entities manually in a small sample of sentences from your corpus.
 # We can define the number of sentences in this seed set here. The default suggestion should be a reasonable number, and if it turns out to not be reasonable, we can adjust this later on.
-seed_size=200  # Minimum number of sentences to be included in the initial random seed set..
+seed_size=400  # Minimum number of sentences to be included in the initial random seed set..
 	# if you have gazatteers that you can use to pretag the data, annotation may be very quick and easy, in which case, you may want to seed with 2,000 sentences, or at least, enough sentences to get several hundred named entities
 # or, if you would like to set a deterministic seed set, set this to the number of lines (NOT SENTENCES) to be included in this seed..
 	# If you want to use a deterministically set seed, you will have to wait until after Step 1 to determine number of lines because the corpus will be reformatted in Step 1..
@@ -50,7 +50,7 @@ seed_size=200  # Minimum number of sentences to be included in the initial rando
 		# set seed_size equal to the line number of the blank line following the last sentence you intend to use as seed data.
 
 # We also need to determine the algorith that will be used later on to identify other sentences to annotate given trends observed in the random seed.
-sortMethod=hardCappedUNKs  # can also try "rapidEntityDiversity" (if capitalization is not likely to mark named entities in your corpus) or "rapidUncertainty" (which is comparable to "rapidEntityDiversity"), though both perform worse than hardCappedUNKs in languages that use capitalization to mark named entities. You can also use "random" here as a baseline.
+sortMethod=preTag_delex  # can also try "rapidEntityDiversity" (if capitalization is not likely to mark named entities in your corpus) or "rapidUncertainty" (which is comparable to "rapidEntityDiversity"), though both perform worse than hardCappedUNKs in languages that use capitalization to mark named entities. You can also use "random" here as a baseline.
 lg=fr  # Review the language codes supported by the Moses Tokenizer. They are the suffixes found on the files in Scripts/Moses_Tokenizer/share/nonbreaking_prefixes. The language is only used for tokenization
 	# IF YOUR LANGUAGE IS NOT LISTED, USE en
 	# en is a safe default as the English tokenization scheme does little besides simply separating punctuation.
@@ -66,10 +66,6 @@ sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg
 # Then it will handle some small preprocessing issues and format the text so that it is readable by our named entity extracting machine learning software.
 # Lastly, this script writes out a document containing the entire fully prepared corpus at Data/Prepared/fullCorpus.txt
 
-### pretag texts using gazatteers to make the manual editing faster
-python Scripts/pre-tag_gazatteers.py Data/Prepared/fullCorpus.txt Data/Gazatteers/* > Data/Prepared/fullCorpus.txt.2
-mv Data/Prepared/fullCorpus.txt.2 Data/Prepared/fullCorpus.txt
-
 
 """ STEP 2: GET SEED """
 # This identifies a random portion of sentences to annotate so we can use them to strategically select other yet unannotated sentences to annotate later on which will hopefully fill in the gaps of the system's knowledge. 
@@ -80,11 +76,25 @@ python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method ra
 
 
 """ STEP 3: MANUAL ANNOTATION OF THE SMALL SEED """
-# Go ahead and annotate the seed: Data/Splits/fullCorpus.seed-$seed_size.seed (back up your annotation somewhere!)
-# Ideally, you want to make sure you have at least 60 - 100 named entities in your seed set to be able to make reasonable predictions about expected accuracy on remaining unannotated data.
+# The seed sentences are located at: Data/Splits/fullCorpus.seed-$seed_size.seed
+# Pretag texts using gazatteers to expedite the manual editing
+	# Words or sequences of words matching lines in a gazatteer will be labeled as follows:
+		# <file-name-of-said-gazatteer-less-the-extension> followed immediately by -B if it is the first or only word in the named entity and -I if it is a non-initial word in a multi-word named entity
+		# all other words will retain a 0
+python Scripts/pre-tag_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed Data/Gazatteers/* > Data/Splits/fullCorpus.seed-$seed_size.seed.preTagged
+mv Data/Splits/fullCorpus.seed-$seed_size.seed.preTagged Data/Splits/fullCorpus.seed-$seed_size.seed
+# Now go ahead and start annotating (or correcting) the pretagged seed (back up your annotation somewhere!)
+# This will involve changing some labels to 0 when they don't actually refer to a named entity in a given context as well as changing 0's to <label>-B or <label>-I when they were not included in the gazatteer. It will also involve potentially editing the labels of pretagged words if the gazatteers do not exactly contain the correct labels or granularity of labels which you wish to extract from your corpus. 
+
+# Ideally, you want to make sure you have at least 60 - 100 named entities in your seed set.
 # If you find less than this in your seed, just cut sentences from Data/Splits/fullCorpus.seed-$seed_size.unannotated into Data/Splits/fullCorpus.seed-$seed_size.seed until you achieve a suitable number of named entities.
 # Similarly, if the converse occurs and you find that you already have well over about 60 named entities before finishing annotating the seed, simply cut the remaining sentences from Data/Splits/fullCorpus.seed-$seed_size.seed into Data/Splits/fullCorpus.seed-$seed_size.unannotated.
+	# A larger seed is always better, but you may not want to annotate the whole seed for time constraints
 # You do not need to update $seed_size to reflect the number of sentences that you actually used in your seed; the $seed_size variable is just used for naming files from this point onward.
+
+### ONCE YOU'VE FINISHED ANNOTATING, run this to update/create gazatteers to include any new annotations
+	# make sure that your finished seed annotation is still in Data/Splits/fullCorpus.seed-$seed_size.seed
+python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed Data/Gazatteers/*
 
 
 """ STEP 4: FEATURE ENGINEERING AND TRAINING SEED MODEL """
@@ -100,14 +110,23 @@ python Scripts/cross_validation.py -testable Data/Splits/fullCorpus.seed-$seed_s
 # Depending on the chosen $sortMethod algorithm, these predictions may serve one or both of the following purposes:
 	# to determine which sentences to annotate going forward based on the certainty with which the seed model predicts named entities in each sentence, thus making future time spent annotating more productive.
 	# to predict how many of the yet unannotated sentences must be annotated in order to achieve a certain accuracy or error reduction (though this functionality is still in development, and the numbers reported cannot yet be trusted).
-sh Scripts/tag_and_rank.sh Models/CRF/best_seed.cls Data/Splits/fullCorpus.seed-$seed_size.unannotated.fts Data/Splits/fullCorpus.seed-$seed_size.unannotated.probs Data/Splits/fullCorpus.seed-$seed_size.unannotated.fts Data/Splits/fullCorpus.seed-$seed_size.seed.fts $sortMethod Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod 
+sh Scripts/tag_and_rank.sh Models/CRF/best_seed.cls Data/Splits/fullCorpus.seed-$seed_size.unannotated.fts Data/Splits/fullCorpus.seed-$seed_size.unannotated.probs Data/Splits/fullCorpus.seed-$seed_size.unannotated.fts Data/Splits/fullCorpus.seed-$seed_size.seed.fts $sortMethod Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod None
 
 
 """ STEP 6: MANUAL ANNOTATION OF THE RANKED SENTENCES """
 # Go ahead and annotate as much of the file Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod as suits your needs.
+# Don't forget to pretag first to expedite the process, because if you didn't have a gazatteer to start, you do after annotating the seed
+python Scripts/pre-tag_gazatteers.py Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Gazatteers/* > Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod.preTagged
+mv Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod.preTagged Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod
+# And now update your gazatteers based on the annotation you've just done
+python Scripts/update_gazatteers.py Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Gazatteers/*
 
 
-""" STEP 7: PERIODICALLY UPDATE MODEL (NOT NECESSARY BUT CAN HELP) """
+""" STEP 7: PERIODICALLY UPDATE MODEL """
+# THIS STEP IS NOT NECESSARY BUT CAN HELP
+# IT MIGHT BE A GOOD IDEA TO RUN STEP 7 ANYTIME YOU FINISH ANNOTATING FOR THE DAY, BUT STILL PLAN ON ANNOTATING MORE LATER
+# SKIP TO 8 ONCE YOU'RE CONTENT WITH THE AMOUNT OF ANNOTATION YOU'VE DONE AND ARE READY TO AUTOMATICALLY TAG THE REST OF THE CORPUS 
+
 # Anytime you want to take a break from annotating in Step 6, you might find it helpful to re-check your expected accuracy for tagging the rest of the corpus, re-check if the feature set you've been using is still optimal, and re-rank the remaining unannotated sentences.
 	# of course if you're using an algorithm like hardCappedUNKs whose ranking does not depend on prediction certainties or feature--label correlations, you may never have the need to perform Step 7, especially as long as the accuracy prediction functionality is not finished.
 # Even for metrics other than hardCappedUNKs,the ranking is still designed such that it is not necessary to run this step and recalculate a new ranking provided the seed was large enough, but recalculating after some additional annotation might marginally improve the ranking and reassure the user.
@@ -118,8 +137,10 @@ lines_annotated=[some_number]
 
 sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt $sortMethod Data/Splits/fullCorpus.seed-$seed_size.unannotated.probs Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod
 
+# Anytime you run step 7, return to step 6 immediately thereafter to annotate the updated file of ranked sentences and to update the gazatteers based on said annotating.
 
-""" STEP 8: WHEN YOU ARE DONE, TRAIN THE FINAL MODEL, PREDICT IN THE UNANNOTATED CORPUS, CALCULATE EXPECTED ACCURACY, AND GENERATE A FULL ANNOTATED CORPUS AND A COMPREHENSIVE LIST OF ALL NAMED ENTITIES """
+
+""" STEP 8: WHEN YOU'RE DONE, TRAIN THE FINAL MODEL, PREDICT IN THE UNANNOTATED CORPUS, CALCULATE EXPECTED ACCURACY, AND GENERATE A FULL ANNOTATED CORPUS AND A COMPREHENSIVE LIST OF ALL NAMED ENTITIES """
 ### Same as Step 7 except, at the end, we will produce the entire corpus--a combination of the random seed and the predicted annotations--as well as a list of all identified named entities.
 
 # RECORD THE LINE NUMBER THAT IS THE BLANK LINE AFTER THE LAST SENTENCE YOU ANNOTATED
@@ -127,3 +148,7 @@ sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fu
 lines_annotated=[some_number]
 
 sh Scripts/update_crossValidate_tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt
+
+# COPY OVER THE FINAL GAZATTEER AUGMENTED WITH YOUR ADDITIONAL ANNOTATION
+mkdir Results/Gazatteers
+cp Data/Gazatteers/* Results/Gazatteers/.
