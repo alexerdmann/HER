@@ -32,22 +32,33 @@
 Finished coding the language independent algorithm preTag_deLex
 	Seems to work really well but could use some more betaTesting
 
-ToDo:
+Stored Data and Gazetteers for DH paper with David and Beatrice locally
+	/Users/AE/Documents/SideProjects/Agnostic_NER/Paris_collaboration/ENS_followUp_09-18/
 
-	UPDATE README 
+Pulled gazetteers from Beatrice’s dump
+	for i in {1..67}; do header="$(head -1 Artlas_export_all_exhibited_works.csv | cut -f$i -d";")"; header="$(echo $header | tr -s ' ' | tr ' ' '_')"; tail -n +2; Artlas_export_all_exhibited_works.csv | cut -f$i -d";" | sort -u > portuguese.$header.gaz; done
+
+
+###################################################################################
+###############
+ToDo (Immediately):
+
+	UPDATE README -> after each annotation session, record the results at that point for ex-post analysis and invite the user to check their progress and decide how much future annotation is needed by eyeballing output
+		FIX REPORTING OF ACCURACY PREDICTION 
 	
+	SEPARATE PUNCTUATION IN GAZETTEERS I PULLED FROM BEATRICE’S DUMP
+
 	ALTER PREPROCESSING STEP
 		cut off maximize length of sentences at 200
 		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
 
-	MORE RECONSIDERATION OF PRECISION AND RECALL IN SCORING
 	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
-	Add functionality to upweight weights so that it's more likely to risk precision errors
 
 	COMBINE THE FINAL LIST AND THE GAZATTEER AT THE END TO MAKE A POTENTIALLY IMPERFECT POTENTIALLY LONGER GAZATTEER
 
-	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
+###############
+ToDo (Some Day):
 
-	FIX REPORTING OF ACCURACY PREDICTION 
+	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
 
 	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one

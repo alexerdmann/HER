@@ -93,6 +93,9 @@ mv Data/Splits/fullCorpus.seed-$seed_size.seed.preTagged Data/Splits/fullCorpus.
 	# A larger seed is always better, but you may not want to annotate the whole seed for time constraints
 # You do not need to update $seed_size to reflect the number of sentences that you actually used in your seed; the $seed_size variable is just used for naming files from this point onward.
 
+### SANITY CHECK YOUR DATA TO MAKE SURE THAT YOU DIDN'T INCORECTLY LABEL ANYTHING
+cut -f1 Data/Splits/fullCorpus.seed-$seed_size.seed | sort -u # IF YOU SEE LABELS WITH TYPOES, THESE MUST BE FIXED BEFORE MOVING ON
+
 ### ONCE YOU'VE FINISHED ANNOTATING, run this to update/create gazatteers to include any new annotations
 	# make sure that your finished seed annotation is still in Data/Splits/fullCorpus.seed-$seed_size.seed
 python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed Data/Gazatteers/*
@@ -115,10 +118,15 @@ sh Scripts/tag_and_rank.sh Models/CRF/best_seed.cls Data/Splits/fullCorpus.seed-
 
 
 """ STEP 6: MANUAL ANNOTATION OF THE RANKED SENTENCES """
-# Go ahead and annotate as much of the file Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod as suits your needs.
 # Don't forget to pretag first to expedite the process, because if you didn't have a gazatteer to start, you do after annotating the seed
 python Scripts/pre-tag_gazatteers.py Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Gazatteers/* > Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod.preTagged
 mv Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod.preTagged Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod
+
+# Go ahead and annotate as much of the file Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod as suits your needs.
+
+### SANITY CHECK YOUR DATA TO MAKE SURE THAT YOU DIDN'T INCORECTLY LABEL ANYTHING
+cut -f1 Data/Splits/fullCorpus.seed-$seed_size.seed | sort -u # IF YOU SEE LABELS WITH TYPOES, THESE MUST BE FIXED BEFORE MOVING ON
+
 # And now update your gazatteers based on the annotation you've just done
 python Scripts/update_gazatteers.py Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Gazatteers/*
 
