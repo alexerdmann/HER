@@ -26,3 +26,28 @@
 
 			if we find errors with this later, we could try using the beautiful soup package instead
 
+##############
+9/21/18 - Alex
+
+Finished coding the language independent algorithm preTag_deLex
+	Seems to work really well but could use some more betaTesting
+
+ToDo:
+
+	UPDATE README 
+
+	MORE RECONSIDERATION OF PRECISION AND RECALL IN SCORING
+	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
+	Add functionality to upweight weights so that it's more likely to risk precision errors
+
+	COMBINE THE FINAL LIST AND THE GAZATTEER AT THE END TO MAKE A POTENTIALLY IMPERFECT POTENTIALLY LONGER GAZATTEER
+
+	ALTER PREPROCESSING STEP
+		cut off maximize length of sentences at 200
+		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
+
+	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
+
+	FIX REPORTING OF ACCURACY PREDICTION 
+
+	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one
