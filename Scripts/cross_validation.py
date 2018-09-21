@@ -141,10 +141,14 @@ def get_best_feature_set(number_of_folds, alwaysTrain, testable, POSSIBLE_FEATS,
 
 	for k in range(1, len(POSSIBLE_FEATS)+1):
 		for feature_set in itertools.combinations(POSSIBLE_FEATS, k):
-			score = n_way_cross_validation(feature_set, alwaysTrain, number_of_folds, testable, fullCorpus)
-			if score >= bestScore:
-				bestScore = score
-				bestSet = feature_set
+
+			### limiting the space of possible feature-sets to search through
+			if 'wordShape' in feature_set and 'prevWord' in feature_set and 'gazatteers' in feature_set:
+
+				score = n_way_cross_validation(feature_set, alwaysTrain, number_of_folds, testable, fullCorpus)
+				if score >= bestScore:
+					bestScore = score
+					bestSet = feature_set
 
 	return bestSet, bestScore
 
@@ -160,8 +164,8 @@ parser.add_argument('-unannotated', type=str, help='Where is the unannotated cor
 
 args = parser.parse_args()
 
-POSSIBLE_FEATS = ['wordShape','charNgrams','prevWord']  ## DEBUG Short List
-# POSSIBLE_FEATS = ['wordShape','charNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats']
+POSSIBLE_FEATS = ['wordShape','charNgrams','prevWord','prevBiWord','prevWordShape','contextPosition','gazatteers']  ## DEBUG Short List
+# POSSIBLE_FEATS = ['wordShape','charNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','contextPosition','gazatteers']
 alwaysTrain = args.alwaysTrain
 testable = args.testable
 fullCorpus = args.fullCorpus

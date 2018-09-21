@@ -478,6 +478,59 @@ def normalize_scores(dic, cieling):
 
 	return dic
 
+def get_Seed_and_UNK_hists(corpus, args):
+	unannotated = unrankedSort(corpus)
+	seed = unrankedSort(args.seed)
+	trainHist = {}
+	if args.alwaysTrain != None:
+		alwaysTrain = unrankedSort(args.alwaysTrain)
+		trainHist = getHist(alwaysTrain)
+	seedHist = getHist(seed)
+	for w in trainHist:
+		if w not in seedHist:
+			seedHist[w] = trainHist[w]
+		else:
+			seedHist[w] += trainHist[w]
+	### Get UNKhist and scale so the range is 0-2, controlling for outliers
+	UNKhist = get_UNKhist(seedHist, unannotated)
+
+	return seedHist, UNKhist
+
+def updateDicts(sents, end_of_trusted_set, knownHist):
+	avg_sent_length = [0,0]
+	hardUNKs = {}
+	word2sentNum = {}
+	sentNum2word = {}
+	sentNum2length = {}
+	weight = 1
+	for sNum in range(len(sents)):
+		if sNum >= end_of_trusted_set:
+			weight = 0.5
+		s = sents[sNum]
+		sent_length = len(s)
+		sentNum2length[sNum] = sent_length
+		avg_sent_length[0] += sent_length
+		avg_sent_length[1] += 1
+		for lNum in range(sent_length):
+			l = s[lNum]
+			word = l.split()[1]
+			label = l.split()[0]
+			if word not in knownHist:
+				if word not in word2sentNum:
+					word2sentNum[word] = {}
+				if sNum not in sentNum2word:
+					sentNum2word[sNum] = {}
+				if word not in hardUNKs:
+					hardUNKs[word] = 0
+				word2sentNum[word][sNum] = True
+				sentNum2word[sNum][word] = True
+				if label != '0':
+					hardUNKs[word] += weight
+				else:
+					hardUNKs[word] += 0.0000000000001
+
+	return avg_sent_length, hardUNKs, word2sentNum, sentNum2word, sentNum2length
+
 ###################################################################
 
 parser = argparse.ArgumentParser()
@@ -485,7 +538,7 @@ parser.add_argument('-corpus', type=str, help='Where is the prepared corpus loca
 parser.add_argument('-seed', type=str, help='Where is the seed corpus located?', required=False, default=None)
 parser.add_argument('-alwaysTrain', type=str, help='Is there any annotation thats been done in addition to the seed?', required=False, default=None)
 parser.add_argument('-predictions', type=str, help='Where is the models predictions for labeling the unannotated data? Predictions should record sentence and marginal probabilities.', required=False)
-parser.add_argument('-sort_method', type=str, help='How should we rank the sentences to be annotated?', choices=['unranked','random','random_seed','set_seed','hardCappedUNKs','rapidUncertainty','rapidEntityDiversity'], required=False, default='unranked')
+parser.add_argument('-sort_method', type=str, help='How should we rank the sentences to be annotated?', choices=['unranked','random','random_seed','set_seed','hardCappedUNKs','rapidUncertainty','rapidEntityDiversity','preTag_delex'], required=False, default='unranked')
 parser.add_argument('-output', type=str, help='Where do you want the output file(s)?', required=False)
 parser.add_argument('-annotate', type=str, help='Do you want to identify sentences to annotate?', required=False, default=None)
 parser.add_argument('-load_annotation', type=bool, help='Do you want to replace unannotated sentences with new annotations?', required=False, default=False)
@@ -499,6 +552,8 @@ sortBy = args.sort_method
 output = args.output
 topXsents = args.topXsents
 topXentities = args.topXentities
+if args.alwaysTrain == 'None':
+	args.alwaysTrain = None
 
 if sortBy == 'random_seed':
 	corpus = randomSort(corpus)
@@ -521,7 +576,7 @@ if sortBy == 'random_seed':
 	print('\nPLEASE ANNOTATE THE SENTENCES IN {}\nWE WILL USE THESE SEED SENTENCES TO SORT THROUGH THE UNANNOTATED SENTENCES AND DETERMINE THE MOST USEFUL SENTENCES TO MANUALLY ANNOTATE. THEN WE WILL TRAIN A MODEL TO AUTOMATICALLY ANNOTATE THE REMAINING SENTENCES ONCE WE ARE CONFIDENT WE CAN ACCURATELY DO SO.\n'.format(output+'.seed'))
 	print_annotation(unannotated,output+'.unannotated')
 
-if sortBy == 'set_seed':
+elif sortBy == 'set_seed':
 	corpus = unrankedSort(corpus)
 	total_lines = 0
 	set_seed = []
@@ -579,7 +634,6 @@ elif sortBy == 'rapidEntityDiversity':
 
 	unannotated = unrankedSort(corpus)
 	seed = unrankedSort(args.seed)
-	# predictions = unrankedSort(args.predictions)
 	trainHist = {}
 	if args.alwaysTrain != None:
 		alwaysTrain = unrankedSort(args.alwaysTrain)
@@ -630,65 +684,105 @@ elif sortBy == 'random':
 	rankedSents = random_sort_and_write_out(corpus, output)
 	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANDOM SENTENCES IN:    {}\n'.format(output))
 
-elif sortBy == 'pretaggedStats':
+elif sortBy == 'preTag_delex':
 
-	nonLexical_features = ' '.join(['wordShape','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats']) # doesn't include: 'charNgrams'
+	knownHist, UNKhist = get_Seed_and_UNK_hists(corpus, args)
+	seed = args.seed
+	unannotated = args.corpus
+	if args.alwaysTrain == None:
+		alwaysTrain = 'None'
+	else:
+		alwaysTrain = args.alwaysTrain
 
 	### generate dummy seed, alwaysTrain, and unannotated corpora
-		# add above nonLexical features
-		# remove the words themselves
-		# normalize all non-0 tags to NE
+		# preTag all of them
+		# get features and deLexicalize them
 	### train one system on the dummy seed + dummy alwaysTrain
 		# test it on unannotated and save the results
-	### train one system on the first half of dummy alwaysTrain, another on the second
-		# test each on the opposite half of dummy alwaysTrain and save the results
-	### align the test outputs to one another and to the original words
-	### UNK unannotated words that were twice labeled as NE get priority 3
-	### UNK unannotated words labeled NE by only dummy seed system get priority 2
-	### UNK unannotated words labeled NE by only pretagged unannotated seed get priority 1
-	### non UNK words get priority 0
-	### multiply sqr rt of words' frequencies by priority to get ranked list of word scores
-	### take the sentence with the highest sum of words scores from its component types
-		# append sentence to ranked sents
-		# reduce word scores to 0 for all words occuring in said sentence
-		# repeat until no word has a positive score
-	### append remaining sentences to ranked sentences
+	### train one system on half of dummy NE-containing sents from unannotated, another on the other half
+		# test each on the opposite half + mutually exclusive completely exhaustive halves of the dummy unannotated sents lacking preTagged NEs
+		# align the predictions with words and save alignment
+	os.system('sh Scripts/preTag_delex_pipeline.sh {} {} {}'.format(seed,alwaysTrain,unannotated))
 
+	# test results from training on delexicalized annotated labels, split 0
+	sents_1 = unrankedSort('Data/Splits/test_0.aligned')
+	end_of_trusted_set = len(sents_1)
+	sents = list(sents_1)
+	# test results from training on delexicalized preTagged labels, split 1
+	sents.extend(unrankedSort('Data/Splits/test_1.aligned'))
+	# test results from training on delexicalized preTagged labels, split 2
+	sents.extend(unrankedSort('Data/Splits/test_2.aligned'))
 
+	# UNK unannotated words that were labeled by split 0 get higher priority
+	avg_sent_length, ignore, word2sentNum, sentNum2word, sentNum2length = updateDicts(sents_1, end_of_trusted_set, knownHist)
 
+	ignore, hardUNKs, ignore_1, ignore_2, ignore_3 = updateDicts(sents, end_of_trusted_set, knownHist)
+	sents = sents_1
+	avg_sent_length = avg_sent_length[0]/avg_sent_length[1]
 
-#############################################################################
+	# consider doing some sort of frequency based normalization to lessen the effect it has here
+		# may not be necessary though, because we do want to address the more frequent words first
+	rankedHardUNKs = sorted([(hardUNKs[k], k) for k in hardUNKs.keys()], reverse=True)
 
-	# unannotated = unrankedSort(corpus)
-	# seed = unrankedSort(args.seed)
-	# # predictions = unrankedSort(args.predictions)
-	# trainHist = {}
-	# if args.alwaysTrain != None:
-	# 	alwaysTrain = unrankedSort(args.alwaysTrain)
-	# 	trainHist = getHist(alwaysTrain)
-	# seedHist = getHist(seed)
-	# for w in trainHist:
-	# 	if w not in seedHist:
-	# 		seedHist[w] = trainHist[w]
-	# 	else:
-	# 		seedHist[w] += trainHist[w]
-	# ### Get UNKhist and scale so the range is 0-2, controlling for outliers
-	# UNKhist = get_UNKhist(seedHist, unannotated)
+	### GET AS MANY HIGH WEIGHTED HARD UNK WORDS AS FAST AS POSSIBLE
+	alreadyIncludedWords = dict(knownHist)
+	alreadyIncludedSents = {}
+	rankedSents = []
+	for t in range(len(rankedHardUNKs)):
+		word = rankedHardUNKs[t][1]
+		if word not in alreadyIncludedWords:
+			bestAddedFreqs = -1
+			for sNum in word2sentNum[word]:
+				if sNum not in alreadyIncludedSents:
 
-	# assert(len(UNKhist) > 0)
-	# UNKhist = normalize_scores(UNKhist, 2)
+					denominator = max(sentNum2length[sNum],avg_sent_length)
 
-	# feature_significances, minFeat = get_feature_significances(seed)
-	# feature_significances = normalize_scores(feature_significances, 2)
+					addedFreqs = 0
+					for w in sentNum2word[sNum]:
 
-	# UNKs_to_cells, sents_to_significance_matrix, UNKless, matrix_to_map = get_sent_significances(unannotated, feature_significances, UNKhist, minFeat)
+						# addedFreqs += hardUNKs[w]
+						addedFreqs += hardUNKs[w] / denominator
 
-	# rankedSents, limit = REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matrix, matrix_to_map, UNKless, output)
+					if addedFreqs > bestAddedFreqs:
+						bestAddedFreqs = addedFreqs
+						bestSent = sNum 
+			for w in sentNum2word[bestSent]:
+				alreadyIncludedWords[w] = True
+			alreadyIncludedSents[bestSent] = True
+			rankedSents.append(sents[bestSent])
 
-	# print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANKED SENTENCES IN:    {}\n'.format(output))
-	# print('The marginal benefit of annotating an additional sentence will start high and decrease until youve annotated {} sentences, after which, marginal gains will be negligible'.format(str(limit)))
+	limit = len(rankedSents)
+	# append the rest of the sents
+	for sNum in range(len(sents)):
+		if sNum not in alreadyIncludedSents:
+			rankedSents.append(sents[sNum])
 
+	os.system('rm Data/Splits/test_*aligned')
 
+	sents2defaultTags = {}
+	unannotated = unannotated.replace('.fts','')
+	original = unrankedSort(unannotated)
+	for s in original:
+		sentence = []
+		tags = []
+		for l in s:
+			word = l.split()[1]
+			label = l.split()[0]
+			sentence.append(word)
+			tags.append(label)
+		sents2defaultTags[' '.join(sentence)] = tags
 
+	# write out
+	output = open(output,'w')
+	for s in rankedSents:
+		sentence = []
+		for l in s:
+			sentence.append(l.split()[1])
+		sent = ' '.join(sentence)
+		defaultTags = sents2defaultTags[sent]
 
+		for i in range(len(sentence)):
+			output.write('{}\t{}\n'.format(defaultTags[i],sentence[i]))
+		output.write('\n')
+	output.close()
 

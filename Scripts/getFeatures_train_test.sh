@@ -8,8 +8,8 @@ modelLocation=$6
 predictions=$7
 
 ### get features
-python3 Scripts/addFeatures.py -corpus $train -fullCorpus $fullCorpus -hist $fullCorpus.hist -features $featureList > $featureOutput.train
-python3 Scripts/addFeatures.py -corpus $test -fullCorpus $fullCorpus -hist $fullCorpus.hist -features $featureList > $featureOutput.test
+python Scripts/addFeatures.py -corpus $train -fullCorpus $fullCorpus -hist $fullCorpus.hist -features $featureList -gazatteers Data/Gazatteers/* > $featureOutput.train
+python Scripts/addFeatures.py -corpus $test -fullCorpus $fullCorpus -hist $fullCorpus.hist -features $featureList -gazatteers Data/Gazatteers/* > $featureOutput.test
 
 ### train crf
 crfsuite learn -a pa -m $modelLocation $featureOutput.train > log.txt

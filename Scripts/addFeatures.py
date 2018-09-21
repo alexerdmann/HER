@@ -31,41 +31,63 @@ def getHist(fullCorpus, hist_dest):
 	pickleOut(hist,hist_dest)
 
 def getWordShape(line,corpus,ind):
-	try:
-		word = line.split()[1]
-		if word[0].isupper():
-			if word[-1] == '.':
-				line += '\twordShape=abbrev'
-			elif len(word) > 1 and word[1].isupper():
-				line += '\twordShape=allCaps'
-			else:
-				line += '\twordShape=capped'
-	except IndexError:
-		pass
-	return line
 
-def getWordShapeAdvanced(line,corpus,ind):
 	word = line.split()[1]
-	if word[0].isupper():
-		if word[-1] == '.':
-			line += '\twordShape=abbrev'
+	moreCaps = False
+	digits = False
+	puncts = False
+	letters = False
+
+	start = True
+	for char in word:
+		if char in string.punctuation:
+			puncts = True 
+		elif char.isdigit():
+			digits = True
+		elif char.isalpha():
+			letters = True
+		elif start == False and char.isupper():
+			moreCaps = True
+		start = False
+
+	# ABBREV
+	if word[-1] == '.' and letters and digits == False: #word[0].isupper():
+		line += '\twordShape=abbrev'
+
+	# OTHER WORD INITIAL CAPS
+	elif word[0].isupper():
+		# MIXED
+		if digits or puncts:
+			line += '\twordShape=mixed'
+		# ALL CAPS
+		elif moreCaps:
+			line += '\twordShape=allCaps'
+		# CAPPED
 		else:
-			caps = 0
-			for ch in word:
-				if ch.isupper():
-					caps += 1
-			if caps == len(word):
-				line += '\twordShape=allCaps'
-			elif caps == 1:
-				line += '\twordShape=titleCase'
-			else:
-				line += '\twordShape=mixedCase'
+			line += '\twordShape=capped'
+
+	# NON ALPHABETICAL
+	elif letters == False:
+		# PUNCTUATION
+		if puncts and digits == False:
+			line += '\twordShape=punct'
+		# NUMBERS WITH PUNCTUATION
+		elif digits and puncts:
+			line += '\twordShape=mixedNumber'
+		# JUST NUMBERS
+		elif digits:
+			line += '\twordShape=number'
+
+	# ALPHABETICAL WITH PUNCTUATION AND OR DIGITS
+	elif puncts or digits:
+		line += '\twordShape=mixed'
+
 	return line
 
 def getPrevWordShape(line,corpus,ind):
 	try:
 		for feat in getWordShape(corpus[ind-1],corpus,ind-1).split()[1:]:
-			if 'wordShape=' in feat:
+			if 'wordShape=' in feat and 'wordShape=' == feat[0:10]:
 				line += '\tprev'+feat
 	except IndexError:
 		pass
@@ -75,21 +97,25 @@ def getNextWordShape(line,corpus,ind):
 	try:
 		if ind+1 != len(corpus):
 			for feat in getWordShape(corpus[ind+1],corpus,ind+1).split()[1:]:
-				if 'wordShape=' in feat:
+				if 'wordShape=' in feat and 'wordShape=' == feat[0:10]:
 					line += '\tnext'+feat
 	except IndexError:
 		pass
 	return line
 
 def getPrevBiWordShape(line,corpus,ind):
-	feat2ad = 'prevBi'
+	feat2ad = 'prevBiWS'
+	go = True
 	for bi in range(1,3):
 		addedFeat = False
-		if ind-bi >= 0:
-			for feat in getWordShape(corpus[ind-bi],corpus,ind-bi).split()[1:]:
-				if 'wordShape=' in feat:
-					feat2ad += '-'+feat
-					addedFeat = True
+		try:
+			if go:
+				for feat in getWordShape(corpus[ind-bi],corpus,ind-bi).split()[1:]:
+					if 'wordShape=' in feat and 'wordShape=' == feat[0:10]:
+						feat2ad += '-'+feat
+						addedFeat = True
+		except IndexError:
+			go = False
 		if addedFeat == False:
 			feat2ad += '-None'
 
@@ -98,14 +124,18 @@ def getPrevBiWordShape(line,corpus,ind):
 	return line
 
 def getNextBiWordShape(line,corpus,ind):
-	feat2ad = 'nextBi'
+	feat2ad = 'nextBiWS'
+	go = True
 	for bi in range(1,3):
 		addedFeat = False
-		if ind+bi < len(corpus):
-			for feat in getWordShape(corpus[ind+bi],corpus,ind+bi).split()[1:]:
-				if 'wordShape=' in feat:
-					feat2ad += '-' + feat
-					addedFeat = True
+		try:
+			if go:
+				for feat in getWordShape(corpus[ind+bi],corpus,ind+bi).split()[1:]:
+					if 'wordShape=' in feat and 'wordShape=' == feat[0:10]:
+						feat2ad += '-'+feat
+						addedFeat = True
+		except IndexError:
+			go = False
 		if addedFeat == False:
 			feat2ad += '-None'
 
@@ -131,21 +161,31 @@ def getNextWord(line,corpus,ind):
 
 def getPrevBiWord(line,corpus,ind):
 	prevWords = 'prevBi'
+	go = True
 	for bi in range(1,3):
 		try:
-			prevWords += '-' + corpus[ind-bi].split()[1]
+			if go:
+				prevWords += '-' + corpus[ind-bi].split()[1]
+			else:
+				prevWords += '-NONE'
 		except IndexError:
 			prevWords += '-NONE'
+			go = False
 	line += '\t'+prevWords
 	return line
 
 def getNextBiWord(line,corpus,ind):
-	nextWords = 'prevBi'
+	nextWords = 'nextBi'
+	go = True
 	for bi in range(1,3):
 		try:
-			nextWords += '-' + corpus[ind+bi].split()[1]
+			if go:
+				nextWords += '-' + corpus[ind+bi].split()[1]
+			else:
+				nextWords += '-NONE'
 		except IndexError:
 			nextWords += '-NONE'
+			go = False
 	line += '\t'+nextWords
 	return line
 
@@ -174,6 +214,59 @@ def getHistStats(line,corpus,ind,hist):
 
 	return line
 
+def getContextPosition(line,corpus,ind):
+	if ind-1 < 0 or len(corpus[ind-1].split()) == 0:
+		line += '\tsentInitial'
+	if ind+1 == len(corpus) or len(corpus[ind+1].split()) == 0:
+		line += '\tsentFinal'
+
+	return line
+
+def getGazMembership(line,corpus,ind,NEs2labels):
+	word = line.split()[1]
+	if word in NEs2labels:
+		for label in NEs2labels[word]:
+			line += '\tGaz-{}'.format(label)
+
+	return line
+
+def getNEs2labels(gazatteers):
+	NEs2labels = {}
+	for gaz in gazatteers:
+		label = gaz.split('/')[-1].split('.')[0]
+		for line in fileinput.input(gaz):
+			line = ' '.join(line.split())
+			if len(line.split()) > 0:
+				if line not in NEs2labels:
+					NEs2labels[line] = {}
+				NEs2labels[line][label] = True
+		fileinput.close()
+
+	return NEs2labels
+
+def deLex(line):
+	line = line.split()
+
+	if len(line) > 0:
+		label = line[0]
+		if label != '0':
+			label = 'NE' #-{}'.format(label.split('-')[1])
+		newLine = [label]
+		for i in range(2,len(line)):
+			feat = line[i]
+			if 'Gaz-' not in feat and 'charNgram=' not in feat:
+				newLine.append(feat)
+		if 'elsewhereLower' in newLine:
+			del newLine[newLine.index('elsewhereLower')+1]
+		if 'elsewhereUpper' in newLine:
+			del newLine[newLine.index('elsewhereUpper')+1]
+
+		line = '\t'.join(newLine)
+	else:
+		line = ''
+
+	return line
+
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser()
@@ -181,7 +274,8 @@ if __name__ == '__main__':
 	parser.add_argument('-corpus', type=str, help='preprocessed corpus with one word per line and a blank space between each sentence. Each line contains the label followed by relevant lexical features, all tab separated.', required=True)
 	parser.add_argument('-hist', type=str, help='pickled histogram of the corpus.', required=True)
 	parser.add_argument('-fullCorpus', type=str, help='location of the full corpus.', required=False, default='Data/Prepared/fullCorpus.txt')
-	parser.add_argument('-features', nargs='+', help='These are the features to include along with the word itself to help the crf classify.', required=False, choices=['wordShape','charNgrams','prevCharNgrams','postCharNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','None'], default=None)
+	parser.add_argument('-features', nargs='+', help='These are the features to include along with the word itself to help the crf classify.', required=False, choices=['wordShape','charNgrams','prevCharNgrams','postCharNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','contextPosition','gazatteers','deLex','None'], default=None)
+	parser.add_argument('-gazatteers', nargs='+', help='These are the gazatteer files.', required=False, default=None)
 	parser.add_argument('-simplify', type=bool, help='Do you want to ignore multi-word entity spans?', required=False, default=False)
 	##################################################################
 
@@ -197,7 +291,14 @@ if __name__ == '__main__':
 
 	features = args.features
 
+	if 'gazatteers' in features:
+		if args.gazatteers == None:
+			print('YOU NEED TO SPECIFY WHERE THE GAZATTEERS ARE LOCATED WITH THE OPTION -gazatteers')
+			sys.exit()
+		NEs2labels = getNEs2labels(args.gazatteers)
+
 	### for each line in the corpus, add any specified features
+	lines = []
 	for ind in range(len(corpus)):
 
 		line = corpus[ind]
@@ -261,5 +362,20 @@ if __name__ == '__main__':
 			if 'histStats' in features:
 				line = getHistStats(line,corpus,ind,hist)
 
-		print(line)
+			if 'contextPosition' in features:
+				line = getContextPosition(line,corpus,ind)
+
+			if 'gazatteers' in features:
+				line = getGazMembership(line,corpus,ind,NEs2labels)
+
+		if 'deLex' not in features:
+			print(line)
+		else:
+			lines.append(line)
+
+				###
+
+	if 'deLex' in features:
+		for line in lines:
+			print(deLex(line))
 	

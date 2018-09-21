@@ -9,12 +9,12 @@ modelLocation=$7
 alwaysTrain=$8
 
 ### get features
-python Scripts/addFeatures.py -corpus $train -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist > $trainFts
+python Scripts/addFeatures.py -corpus $train -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist -gazatteers Data/Gazatteers/* > $trainFts
 if [ "$alwaysTrain" != "None" ]; then 
-	python Scripts/addFeatures.py -corpus $alwaysTrain -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist >> $trainFts
+	python Scripts/addFeatures.py -corpus $alwaysTrain -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist -gazatteers Data/Gazatteers/* >> $trainFts
 fi
 
-python Scripts/addFeatures.py -corpus $test -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist > $testFts
+python Scripts/addFeatures.py -corpus $test -fullCorpus $fullCorpus -features $featureList -hist $fullCorpus.hist -gazatteers Data/Gazatteers/* > $testFts
 
 ### train crf
 crfsuite learn -a pa -m $modelLocation $trainFts > log.txt
