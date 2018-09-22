@@ -18,17 +18,17 @@ HER will walk you through the process of tailoring a system to automatically ide
 
 ### Prerequisites
 
-**Human Capital**
+#### Human Capital
 
 * If you're not familiar with best practices for annotating named entities or are not sure what that really means, it would be good to outline some consistent guidelines for how you will handle issues like ambiguity or embedded named entities ([This will link to a relevant site one day](https://www.amazon.com/USA-Tees-Merica-Dinosaur-Cowboy/dp/B073XXLVNT/ref=pd_lpo_sbs_193_img_0?_encoding=UTF8&refRID=P4PT1M97YJY9CS5H93J3)).
 
 * HER assumes that the user is not mortified by the thought of using a terminal or working from the command line. If you don't know what that means or you've never used the terminal, have no fear! This README will walk you through most everything you need to know and you can consult the Programming Historian's [Introduction to the Command Line](https://programminghistorian.org/en/lessons/intro-to-bash) to fill in any gaps.
 
-**Operating System**
+#### Operating System
 
 HER was developed and tested on Mac. It should run on any Linux system, though Windows will be problematic. Verifying and addressing this is on the to-do list.
 
-**CRFsuite**
+#### CRFsuite
 
 We will use the CRFsuite package behind-the-scenes to handle some of the machine learning. It can be installed on a Mac via *Homebrew*. If you don't already have Homebrew installed, run the following command:
 
@@ -51,7 +51,7 @@ CRFsuite has been successfully installed if you can run the below command withou
 crfsuite -h
 ```
 
-**Python 3**
+#### Python 3
 
 If the below command tells you that you are using a version of Python less than 3.0, you need to get [Python 3](https://www.python.org/download/releases/3.0/) and/or make it the defualt version of Python.
 
@@ -172,10 +172,70 @@ cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz
 
 ## Usage
 
-### Step 1
+### Step 1: Preparing Your Texts
 
+If you have any previously annotated texts, open up the script located at *Scripts/preprocess_Davids_data.py* to see how I incorporated previously annotated texts into my work so as to preserve the annotations. My comments in the script should help you figure out how to adapt it to preserve any pre-existing annotations in your own data. Once you've adapted the script accordingly, save it as *Scripts/preprocess.py*. If you don't have previously annotated texts or the annotations are not useful, the original *Scripts/preprocess.py* script will suite you fine.
 
-by better leveraging gazatteers induced from your annotation to identify the non-lexical features of words most predictive of entity status.
+Now, run the following command:
+```
+sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 
+```
+
+This takes all your texts in *Data/Original/*, regardless of extension or amount of structure and performs the following:
+* *Preprocessing*, it parses relevant meta data structured in the texts
+* *Tokenization*, it allows the model to learn that certain words are present even if they appear with adjoining characters instead of being delimited by spaces
+* *Preparation*, it formats the texts to be readable by CRFsuite, the machine learning system that will help automate our named entity extraction.
+
+The final output of this script is a document containing the entire fully prepared corpus in one file: *Data/Prepared/fullCorpus.txt*
+
+### Step 2: Get A Seed
+
+We help the computer get started on its path to learning how to identify these entities by manually annotating, or marking their presence, in a small *seed* sample of sentences from the corpus.
+
+#### Assuming that you have no previously annotated data
+
+We will randomly extract sentences to use in your seed. This is preferred, because a deterministic seed may reflect a systematically distinct distribution of named entities in the corpus.
+
+The ideal seed size depends on a number of factors. We can easily adjust seed size later, but for now, let's set it to 200 sentences as follows:
+
+```
+seed_size=200
+```
+
+If you have gazatteers with lots helpful entities from your corpus, annotation will go more easily, which might motivate you to do a larger seed, though it also might mean that you don't need such a large seed to get HER going.
+
+If your corpus is very densely packed with entities, you could probably redefine *seed_size* to be less than 200 (and *vice versa*), however, if the types of entities you want to identify are many or finely granular, you might want to increase *seed_size* (and *vice versa*).
+
+The following command will actually extract the seed (whose size we can still edit in Step 3:
+
+```
+python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method random_seed -topXsents $seed_size -output Data/Splits/fullCorpus.seed-$seed_size -annotate True
+```
+
+#### If you *do* have previously annotated data or simply do not want your seed to be random
+
+Open *Data/Prepared/fullCorpus.txt* in a plain text editor (like *Atom* or *Sublime*, not *Word*!) and move all previously annotated sentences and any yet-unannotated sentences you want in your seed to the beginning of the file, as the seed will be extracted from the beginning. Keep in mind that this file is just all the files in *Data/Prepared/* combined, so if all the sentences you wanted to include in the seed were in *Data/Prepared/preAnnotated1.txt* and *Data/Prepared/preAnnotated1.txt* with no other sentences present, it would be easier to do this from the command line as follows:
+
+```
+rm Data/Prepared/fullCorpus.txt
+mv Data/Prepared/preAnnotated1.txt del.1
+mv Data/Prepared/preAnnotated2.txt del.2
+cat del.1 del.2 Data/Prepared/* > Data/Prepared/fullCorpus.txt
+```
+
+Set the variable *seed_size* to the line number immediately following the last sentence you want to include in the seed. At minimum, it should probably include all of your previously annotated texts.
+
+If the last word from the last sentence in *Data/Prepared/fullCorpus.txt* that you wanted to include in the seed was on line 999, then I would set *seed_size* as follows:
+
+```
+seed_size=200
+```
+
+Then, to extract the seed, run the following command:
+
+```
+python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method set_seed -topXlines $seed_size -output Data/Splits/fullCorpus.seed-$seed_size -annotate True
+```
 
 ## Acknowledgments
 
