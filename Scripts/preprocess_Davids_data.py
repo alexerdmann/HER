@@ -19,9 +19,12 @@ if extension == 'xml':
 
 	""" THE USER SHOULD DEFINE WHAT ANNOTATIONS THEY WANT TO PRESERVE HERE """
 	labelMapping = {}
+	""" THE BELOW BLOCK WILL IDENTIFY EVERY STRING WHICH IS LABELED AS place, oronym, building, or geographical IN THE XML AND MAPS THEM TO THE SAME, YET TO BE DEFINED TYPE OF ENTITY"""
+	""" THE USER MUST ALSO EDIT THE TOP OF Scripts/prepare4crf.py TO MAP EACH SYMBOL (HERE, ONLY $) TO THE CORRESPONDING ENTITY TYPE FROM THE EARLIER DEFINED entities VARIABLE """
 	for x in 'place','oronym','building','geographical':
 		segStart = '<name type="'+x+'">'
 		labelMapping[segStart] = '$'
+	""" REPEAT THE ABOVE BLOCK FOR ALL TYPES OF NAMED ENTITIES YOU WANT TO IDENTIFY, GIVING EACH IT'S OWN UNIQUE IDENTIFIER (THE IDENTIFIER SHOULD BE SOME RARE CHARACTER NOT APPEARING IN YOUR CORPUS) """
 	segEnd = '</name>'
 	bodyStart = '<p>'
 	bodyStop = '</p>'
@@ -31,7 +34,6 @@ if extension == 'xml':
 	body = False
 	lookingForClosure = None
 
-	### MAKE THE START AND STOPS OF BODY TEXT MORE RECOGNIZABLE VIA WORD SPLITTING
 	for line in file:
 		for x in labelMapping:
 			line = line.replace(labelMapping[x],'')
@@ -42,13 +44,11 @@ if extension == 'xml':
 			segStarts[labelMapping[segStart]] = True
 		words = []
 
-		### GO THROUGH EACH WORD AND DETERMINE IF IT IS IN BODY OR NOT
 		for word in line.split():
 			if body:
 				if word == bodyStop:
 					body = False
 				else:
-					# PRESERVE ANNOTATIONS WITH A SINGLE CHARACTER MARKER, SPACE SEPARATED, BEFORE AND AFTER THE NAMED ENTITY
 					if word in segStarts:
 						lookingForClosure = word
 						words.append(word)
@@ -62,7 +62,6 @@ if extension == 'xml':
 			elif word == bodyStart:
 				body = True
 
-		# FINALLY WE PROCESS REMAINING TEXT BY CHARACTER REMOVING META DATA WE DON'T NEED
 		text = True
 		if len(words) > 0:
 			sentence = ' '.join(words)

@@ -16,21 +16,21 @@ labelMapping['$'] = 'GEO'
 ###################################################################
 
 
-### IDENTIFY TOKENS THAT WILL STOP A SENTENCE
+### tokens that will stop a sentence
 stops = {}
 for s in ['.',';','!','?']:
 	stops[s] = True
-### IDENTIFY NON-WORD TOKENS THAT SHOULD NEVER START A SENTENCE
+### non-word tokens that should never stop a sentence
 notWords = {}
-# I.E., PUNCTUATION
+# i.e., punctuation
 for p in string.punctuation:
 	notWords[p] = True
-# AND NAMED ENTITY LABELS
+# and named entity labels
 for l in labelMapping:
 	notWords[l] = True
 
 
-### BREAK THE TEXT INTO SENTENCES
+### break test into sentences
 sentences = []
 sentence = []
 lookingForClosure = False
@@ -55,7 +55,7 @@ for line in fileinput.input(file):
 fileinput.close()
 
 
-### REQUIRE THAT ALL NAMED ENTITIES DO NOT START OR END WITH PUNCTUATION
+### require that all named entities not start or end with punctuation
 lookingForClosure = None
 for s in range(len(sentences)):
 	for i in range(len(sentences[s])):
@@ -109,7 +109,14 @@ for s in range(len(sentences)):
 
 ### PRINT OUT THE FINAL LABELS IN CRFSUITE FORMAT
 for s in sentences:
+	lenSent = 0
 	for w in s:
+
+		# disallow extremely long sentences that might break CRFsuite
+		lenSent += 1
+		if lenSent > 200:
+			print()
+
 		if len(w.split()) == 2:
 			print(w)
 	print()

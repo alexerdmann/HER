@@ -13,18 +13,9 @@
 			# use lat instead of grc for Latin
 		python Scripts/Perseus_Title_Author_Extractor.sh GREEK/* # or LATIN
 
-		then I divided GREEK and LATIN into two smaller files and compressed them
-			so they were small enough that I could move them to Data/ and upload to Github
+		then I divided GREEK and LATIN into two smaller files and compressed them to share easily
 
-	I cloned our AgnosticNER github repository to test it with the new data
-
-		Step 1 in the README will obviously not work well because the MOSES preprocessor doesn't handle Latin or Greek, so we shouldn't run:
-
-		sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 
-
-		but the first command in that Step 1 (python Scripts/preprocess.py <file>) seems to be successfully extracting both Latin and Greek body texts from the xml
-
-			if we find errors with this later, we could try using the beautiful soup package instead
+	I tested HER preprocessing on the Latin and Greek data
 
 ##############
 9/21/18 - Alex
@@ -44,13 +35,8 @@ Pulled gazetteers from Beatrice’s dump
 ToDo (Immediately):
 
 	UPDATE README -> after each annotation session, record the results at that point for ex-post analysis and invite the user to check their progress and decide how much future annotation is needed by eyeballing output
-		FIX REPORTING OF ACCURACY PREDICTION 
-	
-	SEPARATE PUNCTUATION IN GAZETTEERS I PULLED FROM BEATRICE’S DUMP
 
-	ALTER PREPROCESSING STEP
-		cut off maximize length of sentences at 200
-		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
+	FIX REPORTING OF ACCURACY PREDICTION 
 
 	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
 
@@ -59,6 +45,11 @@ ToDo (Immediately):
 ###############
 ToDo (Some Day):
 
+	ALTER PREPROCESSING STEP
+		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
+
 	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
 
 	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one
+
+	Move the structured preprocessing over to beautiful soup, no reason to still be using such hacky code for this
