@@ -12,7 +12,7 @@ HER was developed and tested on Mac. It should run on any Linux system though Wi
 
 ### Prerequisites
 
-* **[CRFsuite]**
+**CRFsuite**
 
 We will use the CRFsuite package behind-the-scenes to handle some of the machine learning. It can be installed on a Mac via *Homebrew*. If you don't already have Homebrew installed, run the following command:
 
@@ -27,7 +27,7 @@ brew tap brewsci/science
 brew install crfsuite
 ```
 
-For other installation options, check the CRFsuite host [site](http://www.chokkan.org/software/crfsuite/).
+To install on other platforms, check the CRFsuite host [site](http://www.chokkan.org/software/crfsuite/).
 
 CRFsuite has been successfully installed if you can run the below command without generating an error message
 
@@ -35,7 +35,7 @@ CRFsuite has been successfully installed if you can run the below command withou
 crfsuite -h
 ```
 
-* **[Python 3]**
+**Python 3**
 
 If the below command tells you that you are using a version of Python less than 3.0, you need to get [Python 3](https://www.python.org/download/releases/3.0/) and/or make it the defualt version of Python.
 
@@ -61,7 +61,8 @@ source activate [your-environment-name]
 ```
 python -V
 ```
-**FYI**
+
+*FYI:*
 * *Everytime you open a terminal, you will need to re-activate this environment to gauruntee that you're using the desired version of Python.*
 * *If you ever get a *ModuleNotFoundError*, you can usually fix it with Miniconda like so:*
 ```
