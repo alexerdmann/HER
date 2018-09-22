@@ -1,4 +1,4 @@
-# HER	          Humanities Entity Recognizer
+# HER: the Humanities Entity Recognizer
 
 HER is an easy-to-use tool designed to help Digital Humanists by expediting the process of identifying entities in textual corpora. She is robust and adaptable to different languages, styles, and domains, and seemlessly handles structured and unstructured texts.
 
