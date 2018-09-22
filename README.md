@@ -153,12 +153,12 @@ Upload all the raw texts that you want to extract named entities from
 Upload any relevant gazatteers (lists of entities you want to identify) if you have them (I acknowledge the misspelling but I'm not fixing it on principle).
 * Gazatteer files should have one entity per line and be placed in *Data/Gazatteers/* with the filename [type-of-entity].gaz
 	* A sample gazatteer is located at *../Data/Gazatteers/GEO.gaz*
-	* The type of entities in the gazatteer need not exactly match any of the types of entities you want to identify, though if it does, make sure that [type-of-entity] in the filename matches exactly one of the underscore-separated entity types you defined in the *$entities* variable.
+	* The type of entities in the gazatteer need not exactly match any of the types of entities you want to identify, though if it does, make sure that [type-of-entity] in the filename matches exactly one of the underscore-separated entity types you defined in the *entities* variable
 
-No filenames in both *Data/Original/* and *Data/Gazatteers/* should contain any of the following abominations:
-	* spaces
-	* non-ascii characters, e.g., accents, diacritics, chinese letters, etc.
-	* punctuation other than dash (-) and underscore (\_), i.e., avoid characters like quotations, comments, any form of bracket, etc.
+No filenames in either *Data/Original/* or *Data/Gazatteers/* should contain any of the following abominations:
+* spaces
+* non-ascii characters, e.g., accents, diacritics, chinese letters, etc.
+* punctuation other than dash (-) and underscore (\_), i.e., avoid characters like quotations, comments, any form of bracket, etc.
 
 *For the sake of example, I'll use the sample texts and sample gazatteer included with the download:*
 ```
