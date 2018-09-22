@@ -8,6 +8,7 @@ fullCorpus=$6
 sortMethod=$7
 predictions=$8
 output=$9
+entities=$10
 
 
 # divide annotated ranked sentences
@@ -16,4 +17,4 @@ head -$lines_annotated $rankedSents >> $alwaysTrain
 tail -n +$start_unannotated $rankedSents > $unannotated
 sh Scripts/crossValidate_tag.sh $seed $alwaysTrain $unannotated $fullCorpus
 # This will overwrite your ranked sentences file, so you can start annotating the new fullCorpus.seed-$seed_size.$sortMethod from line 1
-python Scripts/rankSents.py -corpus $unannotated -seed $seed -alwaysTrain $alwaysTrain -sort_method $sortMethod -predictions $predictions -output $output
+python Scripts/rankSents.py -corpus $unannotated -seed $seed -alwaysTrain $alwaysTrain -sort_method $sortMethod -predictions $predictions -output $output -entities $entities

@@ -23,13 +23,14 @@ processing_script = sys.argv[4]
 lg = sys.argv[5]
 add_lines_1 = sys.argv[6]
 add_lines_2 = sys.argv[7]
+entities = sys.argv[8]
 
 Results = {}
 trainingData = 'seed-'+seed_size
 Results[trainingData] = {}
 
 ### RUN THE DATA THROUGH GETTING THE RANDOM SEED
-os.system('sh ../Scripts/oracle_1-4.sh '+name_of_project+' '+seed_size+' '+sort_method+' '+processing_script+' '+lg)
+os.system('sh ../Scripts/oracle_1-4.sh '+name_of_project+' '+seed_size+' '+sort_method+' '+processing_script+' '+lg+' '+entities)
 
 ### RECORD ACCURACY AFTER GETTING RANDOM SEED
 train = 'Data/Splits/fullCorpus.seed-'+seed_size+'.seed.fts'
@@ -38,7 +39,7 @@ predictions = 'Data/Splits/predictions_from_seed.txt'
 Results = record_results(train, test, predictions, Results)
 
 ### RUN THE DATA THROUGH THE FIRST CHECK AND RERANK
-os.system('sh ../Scripts/oracle_5-7.sh '+seed_size+' '+sort_method+' '+add_lines_1)
+os.system('sh ../Scripts/oracle_5-7.sh '+seed_size+' '+sort_method+' '+add_lines_1+' '+entities)
 trainingData += ' & '+add_lines_1
 Results[trainingData] = {}
 Results = record_results(train, test, predictions, Results)

@@ -2,6 +2,7 @@ seed=$1
 alwaysTrain=$2
 unannotated=$3
 seed_size=$4
+entities=$5
 
 echo "Preparing delexicalized, pretagged splits"
 
@@ -15,7 +16,7 @@ else
 	cp $alwaysTrain Data/Splits/alwaysTrain.preTagged
 fi
 # unannotated w/ and w/o for two folds
-python Scripts/pre-tag_gazatteers_separate.py $unannotated Data/Splits/unannotated_NE-1.preTagged Data/Splits/unannotated_noNE-1.preTagged Data/Splits/unannotated_NE-2.preTagged Data/Splits/unannotated_noNE-2.preTagged Data/Gazatteers/*
+python Scripts/pre-tag_gazatteers_separate.py $unannotated Data/Splits/unannotated_NE-1.preTagged Data/Splits/unannotated_noNE-1.preTagged Data/Splits/unannotated_NE-2.preTagged Data/Splits/unannotated_noNE-2.preTagged $entities Data/Gazatteers/*
 
 ### Set up 3 splits
 # split 0 (trains on seed + always train -i.e. legit tags)

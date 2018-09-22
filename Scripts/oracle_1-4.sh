@@ -3,6 +3,7 @@ seed_size=$2
 sort_method=$3
 processing_script=$4
 lg=$5
+entities=$6
 
 
 # set up work space
@@ -20,7 +21,7 @@ rm Data/French.zip
 sh Scripts/prepare_original_texts.sh $processing_script $lg 
 
 # get seed
-python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method random_seed -topXsents $seed_size -output Data/Splits/fullCorpus.seed-$seed_size -annotate True
+python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method random_seed -topXsents $seed_size -output Data/Splits/fullCorpus.seed-$seed_size -annotate True -entities $entities
 
 # update gazatteer with new annotation
 python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed Data/Gazatteers/*

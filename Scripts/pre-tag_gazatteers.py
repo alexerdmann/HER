@@ -7,6 +7,7 @@ import argparse
 import itertools
 import time
 import math
+import string
 
 def unrankedSort(corpus):
 	rankedSents = []
@@ -24,10 +25,12 @@ def unrankedSort(corpus):
 	return rankedSents
 
 corpus = sys.argv[1]
+predefinedEntities = sys.argv[2]
+predefinedEntities = predefinedEntities.split('_')
 sents = unrankedSort(corpus)
 
-if len(sys.argv) > 2:
-	gazatteers = sys.argv[2:]
+if len(sys.argv) > 3:
+	gazatteers = sys.argv[3:]
 
 	NEs2labels = {}
 	gazzes = {}
@@ -36,19 +39,29 @@ if len(sys.argv) > 2:
 		try:
 			maxLen = 0
 			label = gaz.split('/')[-1].split('.')[0]
-			gazzes[label] = {}
-			for line in fileinput.input(gaz):
-				line = ' '.join(line.split())
-				if len(line.split()) > 0:
-					length = len(line.split())
-					if length not in gazzes:
-						gazzes[label][length] = {}
-					gazzes[label][length][line] = True
-					NEs2labels[line] = label
-					if length > maxLen:
-						maxLen = length
-						gaz2max[gaz] = maxLen
-			fileinput.close()
+			if label in predefinedEntities:
+				gazzes[label] = {}
+				for line in fileinput.input(gaz):
+					line = ' '.join(line.split())
+					for ch in line:
+						if ch in string.punctuation:
+							line = line.replace(ch,'')
+					if len(line.split()) > 0:
+						length = len(line.split())
+						if length not in gazzes:
+							gazzes[label][length] = {}
+						gazzes[label][length][line] = True
+						NEs2labels[line] = label
+						if length > maxLen:
+							maxLen = length
+							gaz2max[gaz] = maxLen
+				fileinput.close()
+			else:
+				os.system('echo "THE '+label+' GAZATTEER WILL ONLY BE USED FOR FEATURES AND NOT FOR TAGGING BECAUSE IT WAS NOT LISTED AMONG THE DESIRED ENTITIES TO EXTRACT:"')
+				os.system('echo "'+' '.join(predefinedEntities)+'"')
+				os.system('echo "PLEASE ENSURE THAT THIS WAS INTENTIONAL AND NOT DUE TO A TYPO"')
+				time.sleep(0.1)
+
 		except FileNotFoundError:
 			pass
 
@@ -63,7 +76,11 @@ if len(sys.argv) > 2:
 		sent = []
 		sentLabels = []
 		for l in range(len(sents[s])):
-			sent.append(sents[s][l].split()[1])
+			word = sents[s][l].split()[1]
+			for ch in word:
+				if ch in string.punctuation:
+					word = word.replace(ch,'')
+			sent.append(word)
 			sentLabels.append(sents[s][l].split()[0])
 
 		for n in range(maxLen,0,-1):

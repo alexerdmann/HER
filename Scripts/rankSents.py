@@ -541,6 +541,7 @@ parser.add_argument('-predictions', type=str, help='Where is the models predicti
 parser.add_argument('-sort_method', type=str, help='How should we rank the sentences to be annotated?', choices=['unranked','random','random_seed','set_seed','hardCappedUNKs','rapidUncertainty','rapidEntityDiversity','preTag_delex'], required=False, default='unranked')
 parser.add_argument('-output', type=str, help='Where do you want the output file(s)?', required=False)
 parser.add_argument('-annotate', type=str, help='Do you want to identify sentences to annotate?', required=False, default=None)
+parser.add_argument('-entities', type=str, help='underscore delimited list of types of named entities', required=False, default=None)
 parser.add_argument('-load_annotation', type=bool, help='Do you want to replace unannotated sentences with new annotations?', required=False, default=False)
 parser.add_argument('-topXsents', type=int, help='How many sentences do you want to deal with?', required=False, default=99999999999999999999999999)
 parser.add_argument('-topXlines', type=int, help='This should be the line number for the blank line separating the sentences you want to use as seed from the remaining sentences you want to tag.', required=False)
@@ -702,7 +703,7 @@ elif sortBy == 'preTag_delex':
 	### train one system on half of dummy NE-containing sents from unannotated, another on the other half
 		# test each on the opposite half + mutually exclusive completely exhaustive halves of the dummy unannotated sents lacking preTagged NEs
 		# align the predictions with words and save alignment
-	os.system('sh Scripts/preTag_delex_pipeline.sh {} {} {}'.format(seed,alwaysTrain,unannotated))
+	os.system('sh Scripts/preTag_deLex_pipeline.sh {} {} {}'.format(seed,alwaysTrain,unannotated,args.entities))
 
 	# test results from training on delexicalized annotated labels, split 0
 	sents_1 = unrankedSort('Data/Splits/test_0.aligned')
