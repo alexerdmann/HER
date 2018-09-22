@@ -40,23 +40,14 @@ Meat and tators
 with code heik
 ```
 
-## References
-
-This code was adapted from [Erdmann et al. (2016)](http://www.aclweb.org/anthology/W16-4012) for a Named Entity Recognition workshop at the [2018 NYU-PSL Spatial Humanities Workshop](https://wp.nyu.edu/nyupslgeo/) in Paris.
-
-If you find this repository useful, please cite the [following publication]:
-
-It is adapted from Erdmann et al. (2016), and is freely available.
-(http://www.aclweb.org/anthology/W16-4012)
-Please cite the above paper if you wish to use or adapt any part of this code.
-Please contact Alex Erdmann (ae1541@nyu.edu) with any questions, or bug fixes.
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+HER is under continuous development supported by the [Herodotos Project](https://u.osu.edu/herodotos/) and the [NYU-PSL Spatial Humanities Partnership](https://wp.nyu.edu/nyupslgeo/).
+
+We gratefully acknowledge the [Moses](http://www.statmt.org/moses/) project, from whom we borrowed some code.
+
+If you find HER useful, please cite the below work from which she was adapted.
+
+* Erdmann et al., 2016 [Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012)
+
+*Please contact Alex Erdmann (ae1541@nyu.edu) with any questions, bug fixes, or dating advice.*
