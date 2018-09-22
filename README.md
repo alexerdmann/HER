@@ -57,16 +57,16 @@ conda create -n [your-environment-name] python=3.6 anaconda
 ```
 source activate [your-environment-name]
 ```
-* Verify that you are using the necessary version of Python now
+* Finally, verify that you are using the necessary version of Python
 ```
 python -V
 ```
 
-*FYI:*
-* *Everytime you open a terminal, you will need to re-activate this environment to gauruntee that you're using the desired version of Python.*
-* *If you ever get a *ModuleNotFoundError*, you can usually fix it with Miniconda like so:*
+*Everytime you open a terminal, you will need to re-activate your environment to gauruntee that you're using the desired version of Python.*
+
+*If you ever get a *ModuleNotFoundError* while using HER, you can usually fix it with Miniconda like so:*
 ```
-conda install -n [your-environment-name] [whatever-package-you're-missing]
+conda install -n [your-environment-name] [whatever-module-you're-missing]
 ```
 
 ## Usage
