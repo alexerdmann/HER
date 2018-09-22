@@ -42,11 +42,7 @@ with code heik
 
 ## Acknowledgments
 
-HER is under continuous development supported by the [Herodotos Project](https://u.osu.edu/herodotos/) and the [NYU-PSL Spatial Humanities Partnership](https://wp.nyu.edu/nyupslgeo/).
-
-We gratefully acknowledge the [Moses](http://www.statmt.org/moses/) project, from whom we borrowed some code.
-
-If you find HER useful, please cite the below work from which she was adapted.
+HER is under continuous development supported by the [Herodotos Project](https://u.osu.edu/herodotos/) and the [NYU-PSL Spatial Humanities Partnership](https://wp.nyu.edu/nyupslgeo/). We gratefully acknowledge the [Moses](http://www.statmt.org/moses/) project, from whom we borrowed some code. If you find HER useful, please cite the below work from which she was adapted.
 
 * Erdmann et al., 2016 [Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012)
 
