@@ -330,7 +330,7 @@ python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed 
 
 The rest of Step 6 shows you how to re-evaluate the output lists of entities and full annotated corpus after updating your model with the most recent manual annotation. It is not necessary, but is easy to do and might be a good idea to perform anytime you want to take a break from annotating for a while.
 
-First, record the line number that is the blank line after the last sentence you annotated in *Data/Splits/fullCorpus.seed-$seed_size.seed*. By way of example, let's say that line 2000 for me. I would run the following command:
+First, record the line number that is the blank line after the last sentence you annotated in *Data/Splits/fullCorpus.seed-$seed_size.seed*. By way of example, let's say that line is 2000 for me. I would run the following command:
 
 ```	
 lines_annotated=2000
