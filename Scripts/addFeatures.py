@@ -103,6 +103,12 @@ def getNextWordShape(line,corpus,ind):
 		pass
 	return line
 
+def getWordLength(line,corpus,ind):
+	word = line.split()[1]
+	line += '\t{}'.format(str(len(word)))
+
+	return line
+
 def getPrevBiWordShape(line,corpus,ind):
 	feat2ad = 'prevBiWS'
 	go = True
@@ -274,7 +280,7 @@ if __name__ == '__main__':
 	parser.add_argument('-corpus', type=str, help='preprocessed corpus with one word per line and a blank space between each sentence. Each line contains the label followed by relevant lexical features, all tab separated.', required=True)
 	parser.add_argument('-hist', type=str, help='pickled histogram of the corpus.', required=True)
 	parser.add_argument('-fullCorpus', type=str, help='location of the full corpus.', required=False, default='Data/Prepared/fullCorpus.txt')
-	parser.add_argument('-features', nargs='+', help='These are the features to include along with the word itself to help the crf classify.', required=False, choices=['wordShape','charNgrams','prevCharNgrams','postCharNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','contextPosition','gazatteers','deLex','None'], default=None)
+	parser.add_argument('-features', nargs='+', help='These are the features to include along with the word itself to help the crf classify.', required=False, choices=['wordShape','charNgrams','prevCharNgrams','postCharNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','contextPosition','gazatteers','wordLength','deLex','None'], default=None)
 	parser.add_argument('-gazatteers', nargs='+', help='These are the gazatteer files.', required=False, default=None)
 	parser.add_argument('-simplify', type=bool, help='Do you want to ignore multi-word entity spans?', required=False, default=False)
 	##################################################################
@@ -367,6 +373,9 @@ if __name__ == '__main__':
 
 			if 'gazatteers' in features:
 				line = getGazMembership(line,corpus,ind,NEs2labels)
+
+			if 'wordLength' in features:
+				line = getWordLength(line,corpus,ind)
 
 		if 'deLex' not in features:
 			print(line)
