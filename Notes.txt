@@ -35,8 +35,6 @@ Pulled gazetteers from Beatrice’s dump
 ###############
 ToDo (Immediately):
 
-	UPDATE README -> after each annotation session, record the results at that point for ex-post analysis and invite the user to check their progress and decide how much future annotation is needed by eyeballing output
-
 	FIX REPORTING OF ACCURACY PREDICTION 
 
 	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)

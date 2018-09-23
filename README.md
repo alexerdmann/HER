@@ -113,7 +113,7 @@ If you want to identify birth places, death places, and persons' names as GEOB, 
 ```
 entities=GEOB_GEOD_PRS
 ```
-*Do not use any spaces, dashes, or non-ascii characters when defining* entities*!*
+*Do not use any spaces, dashes, or non-ascii characters when defining* entities!
 
 #### Annotation Optimization Algorithm
 
@@ -258,7 +258,7 @@ Ideally, you might want at least 60 - 100 named entities in your seed set. You m
 
 If you find less entities than seems necessary in your seed, just cut sentences from Data/Splits/fullCorpus.seed-$seed_size.unannotated and paste them into Data/Splits/fullCorpus.seed-$seed_size.seed until you achieve a suitable number of named entities. If the converse occurs and you find that you have far more than the requisite number of entities before finishing annotating the seed, simply cut the remaining sentences from Data/Splits/fullCorpus.seed-$seed_size.seed into Data/Splits/fullCorpus.seed-$seed_size.unannotated. A larger seed is always better, so certainly don't disclude previously annotated data unless you think some domain or style difference might cause it to be extremely unrepresentative of the distribution of entities elsewhere in the corpus. But you also may not want to annotate the whole seed because your annotation time will be more efficiently spent on an upcoming annotation step, provided the seed was big enough to get HER going. *You do not need to update $seed_size to reflect the number of sentences that you actually ended up annotating.*
 
-Upon completing your annotation, sanity check your data to make sure you made no typos. Run the following command to identify all unique labels in your seed and double check that they are all well formed as either *0* or *[allowable-entity-name]-[B-or-I]*. If you made any typoes, search for them in the seed file and correct them.
+Upon completing your annotation, sanity check your data to make sure you made no typos. Run the following command to identify all unique labels in your seed and double check that they are all well formed as either *0* or *[allowable-entity-name]-[B-or-I]*. If you made any typos, search for them in the seed file and correct them.
 
 ```
 cut -f1 Data/Splits/fullCorpus.seed-$seed_size.seed | sort -u
@@ -288,7 +288,7 @@ mkdir Results/Gazatteers
 cp Data/Gazatteers/* Results/Gazatteers/.
 ```
 
-Before we move on and improve on these results, let's save them somewhere specific so we can compare to them later
+Before we move on and improve on these results, let's save them somewhere specific so we can compare to them later.
 
 ```
 mkdir Results_seed
@@ -322,7 +322,7 @@ Upon completing your annotation, sanity check your data again to make sure you m
 cut -f1 Data/Splits/fullCorpus.seed-$seed_size.seed | sort -u
 ```
 
-If it appears that you made any typoes, search for them in the seed file and correct them before updating your gazatteers.
+If it appears that you made any typos, search for them in the seed file and correct them before updating your gazatteers.
 
 ```
 python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed Data/Gazatteers/*
