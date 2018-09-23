@@ -143,7 +143,7 @@ name_of_project=[name-of-your-project]
 sh Scripts/set_up_work_space.sh $name_of_project
 cd $name_of_project
 ```
-*By the way, if have used HER for one project and now want to use her for another, you don't need re-download HER from github. Simply re-define your parameters as described earlier, navigate out of the *name_of_project* subdirectory to the *HER* super-directory, run the commands immediately above, and then continue from here*
+*By the way, if you have used HER for one project and now want to use her for another, you don't need re-download HER from github. Simply re-define your parameters as described earlier, navigate out of the *name_of_project* subdirectory to the *HER* super-directory, run the commands immediately above, and then continue from here*
 
 Upload all the raw texts that you want to extract named entities from
 * Put texts in the *Data/Original/* folder in your new project directory
@@ -345,7 +345,7 @@ sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fu
 Let's check how the model is doing compared to how it was doing last time. 
 
 ```
-sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt
+sh Scripts/tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt
 mkdir Results/Gazatteers
 cp Data/Gazatteers/* Results/Gazatteers/.
 ```

@@ -164,7 +164,7 @@ parser.add_argument('-unannotated', type=str, help='Where is the unannotated cor
 
 args = parser.parse_args()
 
-POSSIBLE_FEATS = ['wordShape','charNgrams','prevWord','prevBiWord','prevWordShape','contextPosition','gazatteers','wordLength']  ## Short List
+POSSIBLE_FEATS = ['wordShape','charNgrams','prevWord','prevBiWord','prevWordShape','contextPosition','gazatteers']  ## Short List
 # POSSIBLE_FEATS = ['wordShape','charNgrams','prevWordShape','nextWordShape','prevWord','nextWord','prevBiWord','nextBiWord','prevBiWordShape','nextBiWordShape','histStats','contextPosition','gazatteers','wordLength'] ## Full List
 alwaysTrain = args.alwaysTrain
 testable = args.testable
