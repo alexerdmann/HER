@@ -1,3 +1,54 @@
+###############
+ToDo (Immediately):
+
+	FIX REPORTING OF ACCURACY PREDICTION 
+
+	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
+
+	COMBINE THE FINAL LIST AND THE GAZATTEER AT THE END TO MAKE A POTENTIALLY IMPERFECT POTENTIALLY LONGER GAZATTEER
+
+###############
+ToDo (Some Day):
+
+	More formal evaluation of preTag_delex and comparison to Random and HardCappedUNKs
+		Show drop in performance of hardCappedUNKs when we lowercase any of the texts where it had performed well and show how comparatively robust preTag_delex is
+
+	Look into making the cross-validation a little harder so we can distinguish the best feature set more clearly even when the model starts getting really good
+
+	ALTER PREPROCESSING STEP
+		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
+
+	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
+
+	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one
+
+	Move the structured preprocessing over to beautiful soup, no reason to still be using such hacky code for this
+
+
+###################################################################################
+
+##############
+9/23/18 - Alex
+
+Changed name of system to HER, Humanities Entity Recognizer (or Herodotos Entity Recognizer) — Thanks David for the name!
+
+Wrote the README and addressed some minor bugs, added some minor functionality, all covered in said README
+
+Product is ready for release, though the to-do list should still be addressed even though it shouldn’t affect the users’ results in any major why when using HER
+
+
+##############
+9/21/18 - Alex
+
+Finished coding the language independent algorithm preTag_deLex
+	Seems to work really well but could use some more betaTesting
+
+Stored Data and Gazetteers for DH paper with David and Beatrice locally
+	/Users/AE/Documents/SideProjects/Agnostic_NER/Paris_collaboration/ENS_followUp_09-18/
+
+Pulled gazetteers from Beatrice’s dump
+	for i in {1..67}; do header="$(head -1 Artlas_export_all_exhibited_works.csv | cut -f$i -d";")"; header="$(echo $header | tr -s ' ' | tr ' ' '_')"; tail -n +2; Artlas_export_all_exhibited_works.csv | cut -f$i -d";" | sort -u > portuguese.$header.gaz; done
+
 
 ##############
 9/13/18 - Alex
@@ -17,40 +68,4 @@
 
 	I tested HER preprocessing on the Latin and Greek data
 
-##############
-9/21/18 - Alex
 
-Finished coding the language independent algorithm preTag_deLex
-	Seems to work really well but could use some more betaTesting
-
-Stored Data and Gazetteers for DH paper with David and Beatrice locally
-	/Users/AE/Documents/SideProjects/Agnostic_NER/Paris_collaboration/ENS_followUp_09-18/
-
-Pulled gazetteers from Beatrice’s dump
-	for i in {1..67}; do header="$(head -1 Artlas_export_all_exhibited_works.csv | cut -f$i -d";")"; header="$(echo $header | tr -s ' ' | tr ' ' '_')"; tail -n +2; Artlas_export_all_exhibited_works.csv | cut -f$i -d";" | sort -u > portuguese.$header.gaz; done
-
-
-###################################################################################
-
-###############
-ToDo (Immediately):
-
-	FIX REPORTING OF ACCURACY PREDICTION 
-
-	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
-
-	COMBINE THE FINAL LIST AND THE GAZATTEER AT THE END TO MAKE A POTENTIALLY IMPERFECT POTENTIALLY LONGER GAZATTEER
-
-###############
-ToDo (Some Day):
-
-	More formal evaluation of preTag_delex and comparison to Random and HardCappedUNKs
-
-	ALTER PREPROCESSING STEP
-		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
-
-	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL INPUT .TXT OR .XML FILES
-
-	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one
-
-	Move the structured preprocessing over to beautiful soup, no reason to still be using such hacky code for this
