@@ -44,6 +44,8 @@ ToDo (Immediately):
 ###############
 ToDo (Some Day):
 
+	More formal evaluation of preTag_delex and comparison to Random and HardCappedUNKs
+
 	ALTER PREPROCESSING STEP
 		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
 
