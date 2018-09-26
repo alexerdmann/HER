@@ -3,11 +3,20 @@ ToDo (Immediately):
 
 	FIX REPORTING OF ACCURACY PREDICTION 
 
-	CHANGE DEFAULT EVALUATION TO BE ( LIST RECALL + IN-CONTEXT F ) / 2 (also how it's calculated and reported in oracle.py)
+	BIAS EVALUATION TOWARD RECALL DURING FEATURE SELECTION
+		(LIST RECALL + IN-CONTEXT F ) / 2
+		(also how it's calculated and reported in oracle.py)
 
-	COMBINE THE FINAL LIST AND THE GAZATTEER AT THE END TO MAKE A POTENTIALLY IMPERFECT POTENTIALLY LONGER GAZATTEER
+	ADDITIONAL OUTPUT: COMBINE THE FINAL LIST AND THE GAZATTEER
+		i.e., a potentially imperfect but maximal list of in+out corpus NE’s
 
-	ALIGN OUTPUT BACK TO PREPARED INPUT AND ADD A COLUMN THAT TELLS AT WHICH STEP THEY WERE ANNOTATED (WITH AUTOMATICALLY MEANING THAT THEY WERE NEVER MANUALLY ANNOTATED) - THIS IS FOR DAVID’S ANALYSIS OF FROM WHICH TEXTS CAN WE LEARN THE MOST ABOUT THE BEHAVIOR OF NE’S IN THE CORPUS AT LARGE AND HOW DOES THIS COMPARE TO THE SIMPLER QUESTION OF FROM WHICH TEXTS DO WE GET THE MOST NE’S OR HIGHEST NE DENSITIES
+	ALIGN OUTPUT BACK TO PREPARED INPUT AND ADD ID COLUMN
+		id specifies at which step each word was annotated
+			(seed, 1,2,…n, auto) where auto means never manually annotated
+		This is for David’s analysis of from which texts can we learn the most
+			about the behavior of NE’s in the full corpus and how does
+			this compare to the simpler question of from which texts do we
+			get the most NE’s or the highest NE density?
 
 ###############
 ToDo (Some Day):
