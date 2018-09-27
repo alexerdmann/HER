@@ -252,7 +252,7 @@ python Scripts/pre-tag_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.seed
 mv Data/Splits/fullCorpus.seed-$seed_size.seed.preTagged Data/Splits/fullCorpus.seed-$seed_size.seed
 ```
 
-Now go ahead and start annotating the seed using a *plain text editor*. Keep in mind that this may involve correcting some non-*0* labels whenever the pretagging step made a mistake. If the pretagging step makes a lot of consistent mistakes due to bad entries in the gazatteer, consider removing those bad entries from the relevant gazatteer files and restarting this Step. *Always back up your hard work somewhere!*
+Now go ahead and start annotating the seed using a *plain text editor*. Keep in mind that this may involve correcting some non-*0* labels whenever the pretagging step made a mistake. If the pretagging step makes a lot of consistent mistakes due to bad entries in the gazatteer, consider removing those bad entries from the relevant gazatteer files and restarting this Step. If the pretagging isn't speeding things up at all because the gazatteers are too bad to be worth addressing like this, remember that the two lines of code above are not necessary - you can always skip them - they are only meant make your annotation easier. *Always back up your hard work somewhere!*
 
 Ideally, you might want at least 60 - 100 named entities in your seed set. You might want more if you have a lot of fine grained entity types or your minority types don't show up at all in the seed, but you also might want less if you have good gazatteers for any infrequent entity types.
 
