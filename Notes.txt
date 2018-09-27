@@ -66,7 +66,7 @@ Stored Data and Gazetteers for DH paper with David and Beatrice locally
 	/Users/AE/Documents/SideProjects/Agnostic_NER/Paris_collaboration/ENS_followUp_09-18/
 
 Pulled gazetteers from Beatrice’s dump
-	for i in {1..67}; do header="$(head -1 Artlas_export_all_exhibited_works.csv | cut -f$i -d";")"; header="$(echo $header | tr -s ' ' | tr ' ' '_')"; tail -n +2; Artlas_export_all_exhibited_works.csv | cut -f$i -d";" | sort -u > portuguese.$header.gaz; done
+	for i in {1..67}; do header="$(head -1 Artlas_export_all_exhibited_works.tsv | cut -f$i)"; header="$(echo $header | tr -s ' ' | tr ' ' '_')"; tail -n +2 Artlas_export_all_exhibited_works.tsv | cut -f$i | sort -u > $header.gaz; done
 
 
 ##############
