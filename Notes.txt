@@ -42,7 +42,9 @@ ToDo (Some Day):
 9/26/18 - Alex
 
 Fixed small bug with gazatteer usage
-	Verified that multiple gazatteers can be leveraged even if some or all do not exactly match a predefined label 
+	Verified that multiple gazatteers can be leveraged even if some or all do not exactly match a predefined label
+Ran initial experiment on French corpus to see the effect of removing capitalization
+	preTag-delex showed about 50% Error Reduction over hardCappedUNKs algorithm 
 
 ##############
 9/23/18 - Alex
