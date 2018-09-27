@@ -56,11 +56,11 @@ if len(sys.argv) > 3:
 							maxLen = length
 							gaz2max[gaz] = maxLen
 				fileinput.close()
-			else:
-				os.system('echo "THE '+label+' GAZATTEER WILL ONLY BE USED FOR FEATURES AND NOT FOR TAGGING BECAUSE IT WAS NOT LISTED AMONG THE DESIRED ENTITIES TO EXTRACT:"')
-				os.system('echo "'+' '.join(predefinedEntities)+'"')
-				os.system('echo "PLEASE ENSURE THAT THIS WAS INTENTIONAL AND NOT DUE TO A TYPO"')
-				time.sleep(0.1)
+			# else:
+			# 	# os.system('echo "THE '+label+' GAZATTEER WILL ONLY BE USED FOR FEATURES AND NOT FOR TAGGING BECAUSE IT WAS NOT LISTED AMONG THE DESIRED ENTITIES TO EXTRACT:"')
+			# 	# os.system('echo "'+' '.join(predefinedEntities)+'"')
+			# 	# os.system('echo "PLEASE ENSURE THAT THIS WAS INTENTIONAL AND NOT DUE TO A TYPO"')
+			# 	# time.sleep(0.1)
 
 		except FileNotFoundError:
 			pass
