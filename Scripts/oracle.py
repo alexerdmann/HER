@@ -11,7 +11,7 @@ def record_results(train, test, predictions, Results):
 	Results[trainingData]['eval-in'] = [F, prec, rec, total]
 	# F, prec, rec, total = custom_eval_exclusive(test, predictions)
 	# Results[trainingData]['eval-out'] = [F, prec, rec, total]
-	biased_F, total = custom_eval_biased_recall_inclusive(train, test, predictions)
+	biased_F = custom_eval_biased_recall_inclusive(train, test, predictions)
 	Results[trainingData]['biased_F'] = biased_F
 	return Results
 
@@ -70,7 +70,7 @@ for trainingData in trainingDataList:
 		p = l[1]
 		r = l[2]
 		t = l[3]
-		printline += str(int(round(100*F,0)))+'\t'+str(int(round(100*P,0)))+', 'str(int(round(100*R,0)))
+		printline += '{}\t{}, {}'.format(str(int(round(100*F,0))),str(int(round(100*P,0))),str(int(round(100*R,0))))
 		if evaluation == 'list-eval-in':
 			printline += '\t\t'
 	print(printline)
