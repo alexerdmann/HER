@@ -159,10 +159,10 @@ if '-identify_best_feats' in sys.argv:
 		os.system('sh Scripts/getFeatures_train.sh '+testable+' '+unannotated+' '+fullCorpus+' '+'_'.join(bestSet)+' '+testable+'.fts'+' '+unannotated+'.fts'+' '+modelLocation+' '+alwaysTrain)
 
 		print('\n_________________________________')
-		print('BEST FEATURE SET:    {}'.format('_'.join(bestSet)))
-		print('TRAINED MODEL:    {}'.format(modelLocation))
-		print('TRAINING DATA WITH FEATURES:    {}'.format(testable+'.fts'))
-		print('UNANNOTATED DATA WITH FEATURES:    {}'.format(unannotated+'.fts'))
+		print('BEST FEATURE SET:\n\t{}'.format('_'.join(bestSet)))
+		print('TRAINED MODEL:\n\t{}'.format(modelLocation))
+		print('TRAINING DATA WITH FEATURES:\n\t{}'.format(testable+'.fts'))
+		print('UNANNOTATED DATA WITH FEATURES:\n\t{}'.format(unannotated+'.fts'))
 		# print('PREDICTED ACCURACY ON UNANNOTATED DATA: {}%\n\n'.format(str(round(100*bestScore,2))))
 		print('_________________________________\n')
 
