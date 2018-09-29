@@ -7,7 +7,7 @@ import argparse
 import itertools
 import time
 import math
-from customEval import custom_eval_exclusive
+from customEval import custom_eval_biased_recall_exclusive
 
 def unrankedSort(corpus):
 	rankedSents = []
@@ -93,7 +93,7 @@ def n_way_cross_validation(feature_set, alwaysTrain, number_of_folds, output_bas
 		# input()
 
 		### evaluate (custom)
-		F, prec, rec, recDenom = custom_eval_exclusive(test, predictions)
+		F, prec, rec, recDenom = custom_eval_biased_recall_exclusive(test, predictions)
 		score += F*recDenom
 		denom += recDenom
 
