@@ -103,7 +103,7 @@ def n_way_cross_validation(feature_set, alwaysTrain, number_of_folds, output_bas
 		os.system('rm '+predictions)
 
 	score /= denom
-	print('{}: {}%    (total entities = {})'.format(featureSet,str(round(100*score,2)),str(denom)))
+	print('{}\n\t{}% accuracy on {} seed entities'.format(featureSet,str(round(100*score,2)),str(denom)))
 	return score
 
 def get_best_feature_set(number_of_folds, alwaysTrain, testable, POSSIBLE_FEATS, fullCorpus):
@@ -158,12 +158,14 @@ if '-identify_best_feats' in sys.argv:
 			alwaysTrain = 'None'
 		os.system('sh Scripts/getFeatures_train.sh '+testable+' '+unannotated+' '+fullCorpus+' '+'_'.join(bestSet)+' '+testable+'.fts'+' '+unannotated+'.fts'+' '+modelLocation+' '+alwaysTrain)
 
-		print('\n_________________________________\n')
+		print('\n_________________________________')
 		print('BEST FEATURE SET:    {}'.format('_'.join(bestSet)))
 		print('TRAINED MODEL:    {}'.format(modelLocation))
 		print('TRAINING DATA WITH FEATURES:    {}'.format(testable+'.fts'))
 		print('UNANNOTATED DATA WITH FEATURES:    {}'.format(unannotated+'.fts'))
-		print('PREDICTED ACCURACY ON UNANNOTATED DATA: {}%\n\n'.format(str(round(100*bestScore,2))))
+		# print('PREDICTED ACCURACY ON UNANNOTATED DATA: {}%\n\n'.format(str(round(100*bestScore,2))))
+		print('_________________________________\n')
+
 
 
 
