@@ -11,7 +11,7 @@ def record_results(train, test, predictions, Results):
 	Results[trainingData]['eval-in'] = [F, prec, rec, total]
 	# F, prec, rec, total = custom_eval_exclusive(test, predictions)
 	# Results[trainingData]['eval-out'] = [F, prec, rec, total]
-	biased_F = custom_eval_biased_recall_inclusive(train, test, predictions)
+	biased_F, total = custom_eval_biased_recall_inclusive(train, test, predictions)
 	Results[trainingData]['biased_F'] = biased_F
 	return Results
 

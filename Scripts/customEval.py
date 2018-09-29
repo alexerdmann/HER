@@ -239,11 +239,12 @@ def custom_eval_biased_recall_exclusive(test, predictions):
 	list_recall = custom_list_eval_exclusive(test, predictions)
 	list_recall = list_recall[2]
 	text_F = custom_eval_exclusive(test, predictions)
+	total = text_F[-1]
 	text_F = text_F[2]
 
 	biased_F = 2 * ( (text_F * list_recall) / (text_F + list_recall) )
 
-	return biased_F
+	return biased_F, total
 
 def custom_eval_biased_recall_inclusive(train, test, predictions):
 	list_recall = custom_list_eval_inclusive(train, test, predictions)
@@ -264,6 +265,6 @@ if __name__ == '__main__':
 	F, prec, rec, recDenom = custom_list_eval_inclusive(train, test, predictions)
 	print('F (PREC, REC) (COUNT): {}     ( {}    {})    ({})'.format(str(F),str(prec),str(rec),str(recDenom)))
 
-	biased_F = custom_eval_biased_recall_inclusive(train, test, predictions)
+	biased_F, total = custom_eval_biased_recall_inclusive(train, test, predictions)
 	print('Recall-biased-F: {}'.format(str(biased_F)))
 
