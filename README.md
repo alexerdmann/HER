@@ -241,7 +241,7 @@ python Scripts/rankSents.py -corpus Data/Prepared/fullCorpus.txt -sort_method ra
 
 #### If you *do* have previously annotated data or simply do not want your seed to be random
 
-Follow the Instructions in Deterministic_Seed.md (github) before proceeding to Step 3.
+Follow the Instructions in [Deterministic_Seed.md](https://github.com/alexerdmann/HER/blob/master/Deterministic_Seed.md) before proceeding to Step 3.
 
 ### Step 3 Manual Annotation Of The Seed
 
