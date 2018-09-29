@@ -22,21 +22,21 @@ ToDo (Immediately):
 ToDo (Some Day):
 
 	More formal evaluation of preTag_delex and comparison to Random and HardCappedUNKs
-		Show drop in performance of hardCappedUNKs when we lowercase any of the texts where it had performed well and show how comparatively robust preTag_delex is
 
-	Look into making the cross-validation a little harder so we can distinguish the best feature set more clearly even when the model starts getting really good
-
-	ALTER PREPROCESSING STEP
-		to preserve features, not just labels, i.e., metadata from the OCR output html or previously existing linguistic analysis
+	ALTER PREPROCESSING STEP to preserve features, not just labels
+		i.e., metadata from the OCR output html or previously existing linguistic analysis
+		The issue is analyzers and disambiguators will apply their own tokenization which will have to be aligned
 
 	SCRIPT TO MAP OUTPUT BACK TO ORIGINAL RAW INPUT .TXT OR .XML FILES
 
-	Custom Eval Bug may still be around, where you have to realign the predictions file by removing an empty first line if you’re unlucky enough to get one
-
 	Move the structured preprocessing over to beautiful soup, no reason to still be using such hacky code for this
 
-
 ###################################################################################
+
+##############
+9/28/18 - Alex
+
+Fixed the misalignment during evaluation bug and fixed the bug in cross validation that was artificially boosting the scores
 
 ##############
 9/26/18 - Alex
