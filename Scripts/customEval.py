@@ -6,6 +6,10 @@ import random
 
 def custom_list_eval_inclusive(train, test, predictions):
 
+	for filename in [train,test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+
 	predictions = (open(predictions).read().splitlines())
 	predictedNEs = {}
 	correctNEs = {}
@@ -80,6 +84,10 @@ def custom_list_eval_inclusive(train, test, predictions):
 
 def custom_list_eval_exclusive(test, predictions):
 
+	for filename in [test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+
 	predictions = (open(predictions).read().splitlines())
 	predictedNEs = {}
 	correctNEs = {}
@@ -139,6 +147,10 @@ def custom_list_eval_exclusive(test, predictions):
 
 def custom_eval_inclusive(train, test, predictions):
 
+	for filename in [train,test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+
 	predictions = (open(predictions).read().splitlines())
 	correct = 0
 	precDenom = 0
@@ -193,6 +205,10 @@ def custom_eval_inclusive(train, test, predictions):
 
 def custom_eval_exclusive(test, predictions):
 
+	for filename in [test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+
 	predictions = (open(predictions).read().splitlines())
 	correct = 0
 	precDenom = 0
@@ -236,6 +252,11 @@ def custom_eval_exclusive(test, predictions):
 	return F, prec, rec, recDenom
 
 def custom_eval_biased_recall_exclusive(test, predictions):
+
+	for filename in [test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+
 	list_recall = custom_list_eval_exclusive(test, predictions)
 	list_recall = list_recall[2]
 	text_F = custom_eval_exclusive(test, predictions)
@@ -247,6 +268,11 @@ def custom_eval_biased_recall_exclusive(test, predictions):
 	return biased_F, total
 
 def custom_eval_biased_recall_inclusive(train, test, predictions):
+
+	for filename in [train,test,predictions]:
+		os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+		os.system("mv "+filename+".2 "+filename)
+		
 	list_recall = custom_list_eval_inclusive(train, test, predictions)
 	list_recall = list_recall[2]
 	text_F = custom_eval_inclusive(train, test, predictions)
