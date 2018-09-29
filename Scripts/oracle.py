@@ -70,7 +70,7 @@ for trainingData in trainingDataList:
 		p = l[1]
 		r = l[2]
 		t = l[3]
-		printline += '{}\t{}, {}'.format(str(int(round(100*F,0))),str(int(round(100*P,0))),str(int(round(100*R,0))))
+		printline += '{}\t{}, {}'.format(str(int(round(100*F,0))),str(int(round(100*p,0))),str(int(round(100*r,0))))
 		if evaluation == 'list-eval-in':
 			printline += '\t\t'
 	print(printline)
