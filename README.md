@@ -194,7 +194,7 @@ unzip Data/French.zip
 mv French/* Data/Original/. # Moves the unzipped data into the Data/Original/ folder
 rm -rf French # Gets rid of the now empty folder the data came in
 rm Data/French.zip # Gets rid of the original zipped copy of the folder
-cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz	# Copies the sample gazatteer into your new project's Data/Gazatteers/ folder
+cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz # Copies the sample gazatteer into your new project's Data/Gazatteers/ folder
 ```
 
 ## Usage
@@ -205,7 +205,7 @@ If you have any previously annotated texts, open up the script located at *Scrip
 
 Now, run the following command:
 ```
-sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 
+sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 2> log.txt
 ```
 
 This takes all your texts in *Data/Original/*, regardless of extension or amount of structure and performs the following:
