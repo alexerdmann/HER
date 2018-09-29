@@ -159,7 +159,7 @@ if '-identify_best_feats' in sys.argv:
 		os.system('sh Scripts/getFeatures_train.sh '+testable+' '+unannotated+' '+fullCorpus+' '+'_'.join(bestSet)+' '+testable+'.fts'+' '+unannotated+'.fts'+' '+modelLocation+' '+alwaysTrain)
 
 		print('\n_________________________________')
-		print('BEST FEATURE SET:\n\t{}'.format('_'.join(bestSet)))
+		print('BEST FEATURE SET:\n\t{} ({}%)'.format('_'.join(bestSet),str(round(100*bestScore,2))))
 		print('TRAINED MODEL:\n\t{}'.format(modelLocation))
 		print('TRAINING DATA WITH FEATURES:\n\t{}'.format(testable+'.fts'))
 		print('UNANNOTATED DATA WITH FEATURES:\n\t{}'.format(unannotated+'.fts'))
