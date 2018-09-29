@@ -31,71 +31,43 @@ def randomSort(corpus):
 
 def write_out_splits(testable, alwaysTrain):
 	### READ IN THE TESTABLE DATA AND TRAINING DATA
-	splits_to_data = {}
 	output_base = testable
 	testable = unrankedSort(testable)
 	sz = math.ceil(len(testable)/3)
+	splits = math.ceil(len(testable)/sz)
 	split_size = max(50,sz)  ## 3-fold cross validation
 	if alwaysTrain == None:
 		alwaysTrain = []
 	else:
 		alwaysTrain = unrankedSort(alwaysTrain)
 	### WRITE OUT ALL OF THE TRAIN TEST SPLITS
-	i = 0
-	index = 0
-	split = 0
-	so_far = []
-	for sent in testable:
-		index += 1
-		i += 1
-		if i > split_size:
-			train_file = open(output_base+'.train-'+str(split),'w')
-			test_file = open(output_base+'.test-'+str(split),'w')
-			train = alwaysTrain
-			try:
-				train.extend(testable[0:index-split_size])
-			except IndexError:
-				pass
-			try:
-				train.extend(testable[index:])
-			except IndexError:
-				pass
-			for s in train:
-				for l in s:
-					train_file.write('{}\n'.format(l))
-				train_file.write('\n')
-			train_file.close()
-			for s in so_far:
-				for l in s:
-					test_file.write('{}\n'.format(l))
-				test_file.write('\n')
-			test_file.close()
-			### RESET I AND THE TEST SET ITERATE THE SPLIT COUNTER
-			split += 1
-			i = 1
-			so_far = []
-		so_far.append(sent)
 
-	if len(so_far) > 0:
-		train_file = open(output_base+'.train-'+str(split),'w')
-		test_file = open(output_base+'.test-'+str(split),'w')
-		train = alwaysTrain
-		try:
-			train.extend(testable[0:index-len(so_far)])
-		except IndexError:
-			pass
-		for s in train:
-			for l in s:
-				train_file.write('{}\n'.format(l))
-			train_file.write('\n')
-		train_file.close()
-		for s in so_far:
-			for l in s:
+	for s in range(splits):
+
+		train_file = open(output_base+'.train-'+str(s),'w')
+		test_file = open(output_base+'.test-'+str(s),'w')
+
+		test_start = s*sz
+		test_end = min(len(testable),(s+1)*sz)
+		test_split = testable[test_start:test_end]
+
+		for sent in test_split:
+			for l in sent:
 				test_file.write('{}\n'.format(l))
 			test_file.write('\n')
 		test_file.close()
 
-	return split + 1
+		train_split = []
+		for i in range(len(testable)):
+			if i < test_start or i >= test_end:
+				train_split.append(testable[i])
+
+				for l in testable[i]:
+					train_file.write('{}\n'.format(l))
+				train_file.write('\n')
+		train_file.close()
+
+	return splits
 
 def n_way_cross_validation(feature_set, alwaysTrain, number_of_folds, output_base, fullCorpus):
 	score = 0
