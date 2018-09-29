@@ -1,12 +1,6 @@
 ###############
 ToDo (Immediately):
 
-	FIX REPORTING OF ACCURACY PREDICTION 
-
-	BIAS EVALUATION TOWARD RECALL DURING FEATURE SELECTION
-		(LIST RECALL + IN-CONTEXT F ) / 2
-		(also how it's calculated and reported in oracle.py)
-
 	ADDITIONAL OUTPUT: COMBINE THE FINAL LIST AND THE GAZATTEER
 		i.e., a potentially imperfect but maximal list of in+out corpus NE’s
 
