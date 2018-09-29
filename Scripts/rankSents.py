@@ -104,8 +104,8 @@ def hard_capped_UNK_sort_and_write_out(corpus, filename, seedHist):
 		output.write('\n')
 	output.close()
 
-	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
-	os.system("mv "+filename.2+" "+filename)
+	os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+	os.system("mv "+filename+".2 "+filename)
 
 	return rankedSents, limit
 
@@ -398,8 +398,8 @@ def REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matr
 		output.write('\n')
 	output.close()
 
-	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
-	os.system("mv "+filename.2+" "+filename)
+	os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+	os.system("mv "+filename+".2 "+filename)
 
 	return rankedSents, len(sents_to_significance_matrix)
 
@@ -464,8 +464,8 @@ def rank_sents_and_write_out(sents_to_UNKs, UNKs_to_Egains, UNKless, filename, s
 		output.write('\n')
 	output.close()
 
-	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
-	os.system("mv "+filename.2+" "+filename)
+	os.system("sed '/./,$!d' "+filename+" > "+filename+".2")
+	os.system("mv "+filename+".2 "+filename)
 
 	for gains in sents_annotated_to_error_reduction:
 		sents_annotated_to_error_reduction[gains] /= totalUNKs
@@ -796,6 +796,6 @@ elif sortBy == 'preTag_delex':
 		op.write('\n')
 	op.close()
 
-	os.system("sed '/./,$!d' "+output+" > "+output.2)
-	os.system("mv "+output.2+" "+output)
+	os.system("sed '/./,$!d' "+output+" > "+output+".2")
+	os.system("mv "+output+".2 "+output)
 
