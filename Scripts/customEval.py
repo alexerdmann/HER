@@ -35,6 +35,8 @@ def custom_list_eval_inclusive(train, test, predictions):
 					correctNEs[label] = {}
 				correctNEs[label][word] = True
 
+			if index == 0 and len(predictions[index].split()) == 0:
+				index += 1
 			predLine = predictions[index]
 			predLabel = predLine.split()[0]
 
@@ -94,6 +96,8 @@ def custom_list_eval_exclusive(test, predictions):
 					correctNEs[label] = {}
 				correctNEs[label][word] = True
 
+			if index == 0 and len(predictions[index].split()) == 0:
+				index += 1
 			predLine = predictions[index]
 			predLabel = predLine.split()[0]
 
@@ -160,6 +164,8 @@ def custom_eval_inclusive(train, test, predictions):
 			if label != '0':
 				recDenom += 1
 
+			if index == 0 and len(predictions[index].split()) == 0:
+				index += 1
 			predLine = predictions[index]
 			predLabel = predLine.split()[0]
 
@@ -202,6 +208,8 @@ def custom_eval_exclusive(test, predictions):
 			if label != '0':
 				recDenom += 1
 
+			if index == 0 and len(predictions[index].split()) == 0:
+				index += 1
 			predLine = predictions[index]
 			predLabel = predLine.split()[0]
 
