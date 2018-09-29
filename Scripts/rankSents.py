@@ -574,7 +574,7 @@ if sortBy == 'random_seed':
 		unannotated = random_corpus[cutoff:]
 
 	print_annotation(random_seed,output+'.seed')
-	print('\nPLEASE ANNOTATE THE SENTENCES IN {}\nWE WILL USE THESE SEED SENTENCES TO SORT THROUGH THE UNANNOTATED SENTENCES AND DETERMINE THE MOST USEFUL SENTENCES TO MANUALLY ANNOTATE. THEN WE WILL TRAIN A MODEL TO AUTOMATICALLY ANNOTATE THE REMAINING SENTENCES ONCE WE ARE CONFIDENT WE CAN ACCURATELY DO SO.\n'.format(output+'.seed'))
+	print("\nPlease annotate any relevant entities in the random seed file:\n\n\t{}\n\nMake sure the finished annotation gets saved with the same filename.\n".format(output+'.seed'))
 	print_annotation(unannotated,output+'.unannotated')
 
 elif sortBy == 'set_seed':
