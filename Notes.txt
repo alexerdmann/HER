@@ -28,6 +28,12 @@ ToDo (Some Day):
 ###################################################################################
 
 ##############
+9/29/18 - Alex
+
+Changed the evaluation to give more credit to recall
+Made the std error output more informative
+
+##############
 9/28/18 - Alex
 
 Fixed the misalignment during evaluation bug and fixed the bug in cross validation that was artificially boosting the scores
