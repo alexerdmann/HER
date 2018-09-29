@@ -27,7 +27,7 @@ def randomSort(corpus):
 	random.shuffle(rankedSents)
 	return rankedSents
 
-def hard_capped_UNK_sort_and_write_out(corpus, output, seedHist):
+def hard_capped_UNK_sort_and_write_out(corpus, filename, seedHist):
 	avg_sent_length = [0,0]
 	sents = unrankedSort(corpus)
 	hardCappedUNKs = {}
@@ -97,12 +97,15 @@ def hard_capped_UNK_sort_and_write_out(corpus, output, seedHist):
 			rankedSents.append(sents[sNum])
 
 	# write out
-	output = open(output,'w')
+	output = open(filename,'w')
 	for s in rankedSents:
 		for l in s:
 			output.write('{}\n'.format(l))
 		output.write('\n')
 	output.close()
+
+	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
+	os.system("mv "+filename.2+" "+filename)
 
 	return rankedSents, limit
 
@@ -318,10 +321,10 @@ def get_sent_significances(unannotated, feature_significances, UNKhist, minFeat)
 
 	return UNKs_to_cells, sents_to_significance_matrix, UNKless, matrix_to_map
 
-def REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matrix, matrix_to_map, UNKless, output):
+def REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matrix, matrix_to_map, UNKless, filename):
 	rankedSents = []
 	usedIDs = {}
-	output = open(output,'w')
+	output = open(filename,'w')
 
 	assert len(unannotated) == len(sents_to_significance_matrix) + len(UNKless)
 
@@ -395,10 +398,13 @@ def REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matr
 		output.write('\n')
 	output.close()
 
+	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
+	os.system("mv "+filename.2+" "+filename)
+
 	return rankedSents, len(sents_to_significance_matrix)
 
-def rank_sents_and_write_out(sents_to_UNKs, UNKs_to_Egains, UNKless, output, sents_annotated_to_error_reduction, totalUNKs, sentNum2length, avg_sent_length):
-	output = open(output,'w')
+def rank_sents_and_write_out(sents_to_UNKs, UNKs_to_Egains, UNKless, filename, sents_annotated_to_error_reduction, totalUNKs, sentNum2length, avg_sent_length):
+	output = open(filename,'w')
 
 	# rank all of the sentences
 	Egains_sents_list = 'start'
@@ -457,6 +463,9 @@ def rank_sents_and_write_out(sents_to_UNKs, UNKs_to_Egains, UNKless, output, sen
 			output.write('{}\n'.format(line))
 		output.write('\n')
 	output.close()
+
+	os.system("sed '/./,$!d' "+filename+" > "+filename.2)
+	os.system("mv "+filename.2+" "+filename)
 
 	for gains in sents_annotated_to_error_reduction:
 		sents_annotated_to_error_reduction[gains] /= totalUNKs
@@ -590,7 +599,7 @@ elif sortBy == 'set_seed':
 			set_seed.append(s)
 
 	print_annotation(set_seed, output+'.seed')
-	print('\nPLEASE ANNOTATE THE SENTENCES IN {}\nWE WILL USE THESE SEED SENTENCES TO SORT THROUGH THE UNANNOTATED SENTENCES AND DETERMINE THE MOST USEFUL SENTENCES TO MANUALLY ANNOTATE. THEN WE WILL TRAIN A MODEL TO AUTOMATICALLY ANNOTATE THE REMAINING SENTENCES ONCE WE ARE CONFIDENT WE CAN ACCURATELY DO SO.\n'.format(output+'.seed'))
+	print('\nPlease annotate the sentences in the file\n\t{}\n'.format(output+'.seed'))
 	print_annotation(unannotated, output+'.unannotated')
 
 elif sortBy == 'rapidUncertainty':
@@ -678,12 +687,12 @@ elif sortBy == 'hardCappedUNKs':
 			seedHist[w] += trainHist[w]
 
 	rankedSents, limit = hard_capped_UNK_sort_and_write_out(corpus, output, seedHist)
-	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANKED SENTENCES IN:    {}\n'.format(output))
+	print('\n\nPlease annotate (in order) the ranked sentences in:\n\t{}\n'.format(output))
 	print('The marginal benefit of annotating an additional sentence will start high and decrease until youve annotated {} sentences, after which, marginal gains will be negligible'.format(str(limit)))
 
 elif sortBy == 'random':
 	rankedSents = random_sort_and_write_out(corpus, output)
-	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANDOM SENTENCES IN:    {}\n'.format(output))
+	print('\n\nPlease annotate the random sentences in:\n\t{}'.format(output))
 
 elif sortBy == 'preTag_delex':
 
@@ -774,7 +783,7 @@ elif sortBy == 'preTag_delex':
 		sents2defaultTags[' '.join(sentence)] = tags
 
 	# write out
-	output = open(output,'w')
+	op = open(output,'w')
 	for s in rankedSents:
 		sentence = []
 		for l in s:
@@ -783,7 +792,10 @@ elif sortBy == 'preTag_delex':
 		defaultTags = sents2defaultTags[sent]
 
 		for i in range(len(sentence)):
-			output.write('{}\t{}\n'.format(defaultTags[i],sentence[i]))
-		output.write('\n')
-	output.close()
+			op.write('{}\t{}\n'.format(defaultTags[i],sentence[i]))
+		op.write('\n')
+	op.close()
+
+	os.system("sed '/./,$!d' "+output+" > "+output.2)
+	os.system("mv "+output.2+" "+output)
 
