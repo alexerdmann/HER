@@ -93,7 +93,33 @@ Before we can start identifying named entities, we need to define some aspects o
 
 First off, we need to define a *lg* variable to tell HER what language we're dealing with. If you have multiple languages, you would probably be better off dividing your data by language and running HER multiple times, one for each language with its own data.
 
-To set your *lg* variable, review the language codes supported by the Moses Tokenizer which HER will use to prepare your data. These codes are represented by the suffixes found on the files located in *Scripts/Moses_Tokenizer/share/nonbreaking_prefixes/nonbreaking_prefix.[suffix]*.
+To set your *lg* variable, choose one of the language codes below that are supported by the Moses Tokenizer which HER will use to prepare your data:
+
+* ca - Catalan
+* cs - Czech
+* de - German
+* el - Modern Greek
+* en - English
+* es - Spanish
+* fi - Finnish
+* fr - French
+* ga - Irish
+* hu - Hungarian
+* is - Icelandic
+* it - Italian
+* lt - Lithuanian
+* lv - Latvian
+* nl - Dutch
+* pl - Polish
+* pt - Portuguese
+* ro - Romanian
+* ru - Russian
+* sk - Slovak
+* sl - Slovenian
+* sv - Swedish
+* ta - Tamil
+* yue - Cantonese
+* zh - Mandarin
 
 If your language is not listed, consider using *en*, as English is a safe default. English tokenization is minimalistic, essentially only separating punctuation from adjoining words, whereas many other languages' tokenization schemes aggressively break words into component meaningful parts.
 
@@ -163,12 +189,12 @@ No filenames in either *Data/Original/* or *Data/Gazatteers/* should contain any
 
 *For the sake of example, I'll use the sample texts and sample gazatteer included with the download:*
 ```
-cp ../Data/Original/French.zip Data/.
+cp ../Data/Original/French.zip Data/. # This copies the zipped file into the Data/ subdirectory of your new work space
 unzip Data/French.zip
-mv French/* Data/Original/.
-rm -rf French
-rm Data/French.zip
-cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz
+mv French/* Data/Original/. # Moves the unzipped data into the Data/Original/ folder
+rm -rf French # Gets rid of the now empty folder the data came in
+rm Data/French.zip # Gets rid of the original zipped copy of the folder
+cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz	# Copies the sample gazatteer into your new project's Data/Gazatteers/ folder
 ```
 
 ## Usage
