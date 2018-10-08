@@ -169,6 +169,8 @@ name_of_project=[name-of-your-project]
 sh Scripts/set_up_work_space.sh $name_of_project
 cd $name_of_project
 ```
+*At this point, you are now in the directory HER/$name_of_project/. All future commands will be run from within this $name_of_project folder, not outside of it, and all data should be stored within this $name_of_project folder as well.*
+
 *By the way, if you have used HER for one project and now want to use her for another, you don't need re-download HER from github. Simply re-define your parameters as described earlier, navigate out of the *name_of_project* subdirectory to the *HER* super-directory, run the commands immediately above, and then continue from here*
 
 Upload all the raw texts that you want to extract named entities from
@@ -187,7 +189,7 @@ No filenames in either *Data/Original/* or *Data/Gazatteers/* should contain any
 * non-ascii characters, e.g., accents, diacritics, chinese letters, etc.
 * punctuation other than dash (-) and underscore (\_), i.e., avoid characters like quotations, comments, any form of bracket, etc.
 
-*For the sake of example, I'll use the sample texts and sample gazatteer included with the download:*
+*For the sake of example, I'll use the sample texts and sample gazatteer included with the download by running the following commands.. if you are using your own data and own gazatteers, don't run the following commands:*
 ```
 cp ../Data/Original/French.zip Data/. # This copies the zipped file into the Data/ subdirectory of your new work space
 unzip Data/French.zip
