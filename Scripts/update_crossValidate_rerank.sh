@@ -8,7 +8,7 @@ fullCorpus=$6
 sortMethod=$7
 predictions=$8
 output=$9
-entities=$10
+entities="${10}"
 
 
 # divide annotated ranked sentences
