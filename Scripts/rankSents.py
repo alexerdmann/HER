@@ -7,6 +7,7 @@ import argparse
 import time
 import itertools
 import math
+import string
 
 def unrankedSort(corpus):
 	rankedSents = []
@@ -602,76 +603,6 @@ elif sortBy == 'set_seed':
 	print('\nPlease annotate the sentences in the file\n\t{}\n'.format(output+'.seed'))
 	print_annotation(unannotated, output+'.unannotated')
 
-elif sortBy == 'rapidUncertainty':
-	unannotated = unrankedSort(corpus)
-	seed = unrankedSort(args.seed)
-	predictions = unrankedSort(args.predictions)
-	trainHist = {}
-	if args.alwaysTrain != None:
-		alwaysTrain = unrankedSort(args.alwaysTrain)
-		trainHist = getHist(alwaysTrain)
-	seedHist = getHist(seed)
-	for w in trainHist:
-		if w not in seedHist:
-			seedHist[w] = trainHist[w]
-		else:
-			seedHist[w] += trainHist[w]
-	assert len(unannotated) == len(predictions)
-
-	UNKs_to_Egains, sents_to_UNKs, UNKs_to_sents, UNKless, totalUNKs, sentNum2length, avg_sent_length = get_UNKs_stats(unannotated, predictions, seedHist)
-	sents_annotated_to_error_reduction = {0: 0.0}
-	sents_annotated_to_error_reduction, rankedLimit = rank_sents_and_write_out(sents_to_UNKs, UNKs_to_Egains, UNKless, output, sents_annotated_to_error_reduction, totalUNKs, sentNum2length, avg_sent_length)
-
-	desiredER = 0.1
-	benchmarks = []
-	for sents_annotated in sents_annotated_to_error_reduction:
-		if sents_annotated_to_error_reduction[sents_annotated] >= desiredER:
-			benchmarks.append(sents_annotated)
-			if desiredER == 1.0:
-				break
-			else:
-				desiredER += 0.1
-
-	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANKED SENTENCES IN:    {}\n'.format(output))
-	print('The following is an approximation of the error reduction that can be attained as a function of how many sentences you are able to annotate:')
-	multiplier = 0
-	factor = 10
-	for sents_annotated in benchmarks:
-		multiplier += 1
-		print('{}% ERROR REDUCTION:   {} SENTENCES'.format(str(factor*multiplier),str(sents_annotated)))
-
-elif sortBy == 'rapidEntityDiversity':
-
-	unannotated = unrankedSort(corpus)
-	seed = unrankedSort(args.seed)
-	trainHist = {}
-	if args.alwaysTrain != None:
-		alwaysTrain = unrankedSort(args.alwaysTrain)
-		trainHist = getHist(alwaysTrain)
-	seedHist = getHist(seed)
-	for w in trainHist:
-		if w not in seedHist:
-			seedHist[w] = trainHist[w]
-		else:
-			seedHist[w] += trainHist[w]
-	### Get UNKhist and scale so the range is 0-2, controlling for outliers
-	UNKhist = get_UNKhist(seedHist, unannotated)
-
-	assert(len(UNKhist) > 0)
-	UNKhist = normalize_scores(UNKhist, 2)
-
-	feature_significances, minFeat = get_feature_significances(seed)
-	feature_significances = normalize_scores(feature_significances, 2)
-
-	# debug = [(k, feature_significances[k]) for k in sorted(feature_significances, key=feature_significances.get, reverse=True)]
-
-	UNKs_to_cells, sents_to_significance_matrix, UNKless, matrix_to_map = get_sent_significances(unannotated, feature_significances, UNKhist, minFeat)
-
-	rankedSents, limit = REDrank_and_write_out(UNKs_to_cells, unannotated, sents_to_significance_matrix, matrix_to_map, UNKless, output)
-
-	print('\n\nPLEASE ANNOTATE (IN ORDER) THE RANKED SENTENCES IN:    {}\n'.format(output))
-	print('The marginal benefit of annotating an additional sentence will start high and decrease until youve annotated {} sentences, after which, marginal gains will be negligible'.format(str(limit)))
-
 elif sortBy == 'hardCappedUNKs':
 
 	seed = unrankedSort(args.seed)
@@ -712,7 +643,8 @@ elif sortBy == 'preTag_delex':
 	### train one system on half of dummy NE-containing sents from unannotated, another on the other half
 		# test each on the opposite half + mutually exclusive completely exhaustive halves of the dummy unannotated sents lacking preTagged NEs
 		# align the predictions with words and save alignment
-	os.system('sh Scripts/preTag_deLex_pipeline.sh {} {} {}'.format(seed,alwaysTrain,unannotated,args.entities))
+
+	os.system('sh Scripts/preTag_deLex_pipeline.sh {} {} {} {}'.format(seed, alwaysTrain, unannotated, args.entities))
 
 	# test results from training on delexicalized annotated labels, split 0
 	sents_1 = unrankedSort('Data/Splits/test_0.aligned')

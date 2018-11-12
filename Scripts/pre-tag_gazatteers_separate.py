@@ -7,6 +7,7 @@ import argparse
 import itertools
 import time
 import math
+import string
 
 def unrankedSort(corpus):
 	rankedSents = []
@@ -58,15 +59,18 @@ if len(sys.argv) > 7:
 						maxLen = length
 						gaz2max[gaz] = maxLen
 			fileinput.close()
-		else:
-			os.system('echo "THE '+label+' GAZATTEER WILL ONLY BE USED FOR FEATURES AND NOT FOR TAGGING BECAUSE IT WAS NOT LISTED AMONG THE DESIRED ENTITIES TO EXTRACT:"')
-			os.system('echo "'+' '.join(predefinedEntities)+'"')
-			os.system('echo "PLEASE ENSURE THAT THIS WAS INTENTIONAL AND NOT DUE TO A TYPO"')
-			time.sleep(0.1)
+		# else:
+		# 	os.system('echo "THE '+label+' GAZATTEER WILL ONLY BE USED FOR FEATURES AND NOT FOR TAGGING BECAUSE IT WAS NOT LISTED AMONG THE DESIRED ENTITIES TO EXTRACT:"')
+		# 	os.system('echo "'+' '.join(predefinedEntities)+'"')
+		# 	os.system('echo "PLEASE ENSURE THAT THIS WAS INTENTIONAL AND NOT DUE TO A TYPO"')
+		# 	time.sleep(0.1)
 
-	maxLens = list(gaz2max.values())
-	maxLens.sort(reverse=True)
-	maxLen = maxLens[0]
+	if len(gaz2max) > 0:
+		maxLens = list(gaz2max.values())
+		maxLens.sort(reverse=True)
+		maxLen = maxLens[0]
+	else:
+		maxLen = 0
 
 	for s in range(len(sents)):
 		sent = []

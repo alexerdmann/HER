@@ -233,6 +233,11 @@ def getGazMembership(line,corpus,ind,NEs2labels):
 	if word in NEs2labels:
 		for label in NEs2labels[word]:
 			line += '\tGaz-{}'.format(label)
+	else:
+		lWord = word.lower()
+		if lWord in NEs2labels:
+			for label in NEs2labels[lWord]:
+				line += '\tGaz-{}'.format(label)
 
 	return line
 
