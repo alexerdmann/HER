@@ -268,7 +268,7 @@ def custom_eval_biased_recall_exclusive(test, predictions):
 	except ZeroDivisionError:
 		biased_F = 0.0
 
-	return biased_F # total
+	return biased_F, total
 
 def custom_eval_biased_recall_inclusive(train, test, predictions):
 
