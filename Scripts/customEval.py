@@ -263,9 +263,12 @@ def custom_eval_biased_recall_exclusive(test, predictions):
 	total = text_F[-1]
 	text_F = text_F[2]
 
-	biased_F = 2 * ( (text_F * list_recall) / (text_F + list_recall) )
+	try:
+		biased_F = 2 * ( (text_F * list_recall) / (text_F + list_recall) )
+	except ZeroDivisionError:
+		biased_F = 0.0
 
-	return biased_F, total
+	return biased_F # total
 
 def custom_eval_biased_recall_inclusive(train, test, predictions):
 
@@ -278,7 +281,10 @@ def custom_eval_biased_recall_inclusive(train, test, predictions):
 	text_F = custom_eval_inclusive(train, test, predictions)
 	text_F = text_F[2]
 
-	biased_F = 2 * ( (text_F * list_recall) / (text_F + list_recall) )
+	try:
+		biased_F = 2 * ( (text_F * list_recall) / (text_F + list_recall) )
+	except ZeroDivisionError:
+		biased_F = 0.0
 
 	return biased_F
 
