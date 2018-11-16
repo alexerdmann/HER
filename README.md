@@ -20,119 +20,25 @@ HER will walk you through the process of tailoring a system to automatically ide
 
 Check out the [Prerequisites](https://github.com/alexerdmann/HER/blob/master/Scripts/Prerequisites.md) page for information on how to make sure HER will run on your machine.
 
+### Quick Demo
+
+To verify that your environment is amenable to HER, you can run the commands found in *Scripts/Useful/beta_testing_commands.sh*. This should run in a matter of minutes depending on your machine.
+
 ### Defining Parameters
 
-Before we can start identifying named entities, we need to define some aspects of how this entity extraction is gonna go down.
-
-#### Language
-
-First off, we need to define a *lg* variable to tell HER what language we're dealing with. If you have multiple languages, you would probably be better off dividing your data by language and running HER multiple times, one for each language with its own data.
-
-To set your *lg* variable, choose one of the language codes below that are supported by the Moses Tokenizer which HER will use to prepare your data:
-
-* ca - Catalan
-* cs - Czech
-* de - German
-* el - Modern Greek
-* en - English
-* es - Spanish
-* fi - Finnish
-* fr - French
-* ga - Irish
-* hu - Hungarian
-* is - Icelandic
-* it - Italian
-* lt - Lithuanian
-* lv - Latvian
-* nl - Dutch
-* pl - Polish
-* pt - Portuguese
-* ro - Romanian
-* ru - Russian
-* sk - Slovak
-* sl - Slovenian
-* sv - Swedish
-* ta - Tamil
-* yue - Cantonese
-* zh - Mandarin
-
-If your language is not listed, consider using *en*, as English is a safe default. English tokenization is minimalistic, essentially only separating punctuation from adjoining words, whereas many other languages' tokenization schemes aggressively break words into component meaningful parts.
-
-I will tell HER that my data is French with the following command:
-
-```
-lg=fr
-```
-
-#### Entity Types
-
-In order to teach a machine to help us extract entities, we need to first define what types of entities we want distinguish at what granularity. Once you do that, assign them to a variable called *entities*, separated by underscores. For example, let's say I'm interested in extracting only geographical places which I want marked in my corpus as GEO. Then I'll define *entities* as followings:
-```
-entities=GEO
-```
-If you want to identify birth places, death places, and persons' names as GEOB, GEOD, and PRS respectively, then you would define *entities* as followings:
-```
-entities=GEOB_GEOD_PRS
-```
-*Do not use any spaces, dashes, or non-ascii characters when defining* entities!
-
-#### Annotation Optimization Algorithm
-
-Now we also need to determine the algorithm that the computer will use to determine which sentences are more informative so that any time spent manually annotating named entities is optimally beneficial. The best, most robust algorithm is *preTag_delex*, which I will tell HER I want to use by assigning it to the variable *sortMethod*:
-
-```
-sortMethod=preTag_delex
-```
-
-Other, worse performing algorithms include:
-* *hardCappedUNKs* which relies on capitalization being highly predictive of the distribution of the entities you're concerned with in your corpus
-* *rapidEntityDiversity* and *rapidUncertainty* which are robust to different languages, styles, etc. like *preTag_delex* and unlike *hardCappedUNKs*, though *preTag_delex* far outperforms them
-* *random* served as a useful sorting method to compare to as a baseline when i was developing the other algorithms
+Tell HER what language you're working on, what entity labels you want to use, and what algorithm you want her to use to find more of those entities. Check out the [Parameters](https://github.com/alexerdmann/HER/blob/master/Scripts/Defining_Parameters.md) page for more information.
 
 ### Setting Up Your Work Space
 
-If you have *git* installed, run the commands below (you can install git via these [instructions](https://www.linode.com/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/))
-```
-git clone https://github.com/alexerdmann/HER
-cd HER
-```
-Otherwise, download HER from this [url](https://github.com/alexerdmann/AgnosticNER.git) and navigate to the downloaded HER directory in the terminal by typing *cd* followed by a space, then dragging the HER directory into your terminal window, then pressing enter.
+Set us is simple. Just clone the github repository, cd into it, come up with a name for your project, then run the commands below. After that, just cp your corpus file(s) into *Data/Original/* and if you have any gazetteers, put them in *Data/Gazatteers/*. For more information, especially regarding filenaming conventions, check out the long-winded [Set Up](https://github.com/alexerdmann/HER/blob/master/Scripts/Set_Up.md) explanation.
 
-Now it's time to come up with a name for your project and let HER create a folder to work in:
 ```
 name_of_project=[name-of-your-project]
 sh Scripts/set_up_work_space.sh $name_of_project
 cd $name_of_project
 ```
-*At this point, you are now in the directory HER/$name_of_project/. All future commands will be run from within this $name_of_project folder, not outside of it, and all data should be stored within this $name_of_project folder as well.*
 
-*By the way, if you have used HER for one project and now want to use her for another, you don't need re-download HER from github. Simply re-define your parameters as described earlier, navigate out of the *name_of_project* subdirectory to the *HER* super-directory, run the commands immediately above, and then continue from here*
-
-Upload all the raw texts that you want to extract named entities from
-* Put texts in the *Data/Original/* folder in your new project directory
-	* *Make sure you don't accidentally put them in* HER/Data/Original/
-* The data you put in *Data/Original/* must be *.txt* or *.xml* files, no folders and no other formats/extensions
-	* Handling HTML files is on the to-do list
-
-Upload any relevant gazatteers (lists of entities you want to identify) if you have them (I acknowledge the misspelling but I'm not fixing it on principle).
-* Gazatteer files should have one entity per line and be placed in *Data/Gazatteers/* with the filename [type-of-entity].gaz
-	* A sample gazatteer is located at *../Data/Gazatteers/GEO.gaz*
-	* The type of entities in the gazatteer need not exactly match any of the types of entities you want to identify, though if it does, make sure that [type-of-entity] in the filename matches exactly one of the underscore-separated entity types you defined in the *entities* variable
-
-No filenames in either *Data/Original/* or *Data/Gazatteers/* should contain any of the following abominations:
-* spaces
-* non-ascii characters, e.g., accents, diacritics, chinese letters, etc.
-* punctuation other than dash (-) and underscore (\_), i.e., avoid characters like quotations, comments, any form of bracket, etc.
-
-*For the sake of example, I'll use the sample texts and sample gazatteer included with the download by running the following commands.. if you are using your own data and own gazatteers, don't run the following commands:*
-```
-cp ../Data/Original/French.zip Data/. # This copies the zipped file into the Data/ subdirectory of your new work space
-unzip Data/French.zip
-mv French/* Data/Original/. # Moves the unzipped data into the Data/Original/ folder
-rm -rf French # Gets rid of the now empty folder the data came in
-rm Data/French.zip # Gets rid of the original zipped copy of the folder
-cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz # Copies the sample gazatteer into your new project's Data/Gazatteers/ folder
-```
+For the record, I acknowledge that I have no idea how to spell gazatteer; I'm just leaning into it at this point.
 
 ## Usage
 

@@ -12,7 +12,7 @@ rm -rf French
 rm Data/French.zip
 cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz
 
-sh Scripts/prepare_original_texts.sh Scripts/preprocess.py $lg 
+sh Scripts/prepare_original_texts.sh Scripts/Useful/preprocess_Davids_data.py $lg 
 
 seed_size=200
 
