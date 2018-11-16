@@ -12,78 +12,13 @@ HER will walk you through the process of tailoring a system to automatically ide
 * She prompts you to annotate these types of entities in a small *seed* sample text
 * Based on said seed, she ranks all sentences in the corpus that you have not yet annotated based on how useful they should be for helping HER to learn to identify these entity types automatically
 * She requests you to start annotating the ranked sentences
-* You can stop annotating at any time and check if HER has learned to identify entities with acceptable accuracy by requesting HER to attempt to automatically find all entities in the remaining unannotated sentences and compile a list of all unique, identified entities (both manually and automatically identified)
+* You can stop annotating at any time and check if HER has learned to identify entities with acceptable accuracy by requesting HER to attempt to automatically find all entities in the remaining unannotated sentences and compile a list of all unique, identified entities
 * You will evaluate the quality of these outputs and decide if your manual labor seems more valuably spent annotating more sentences or post editing said outputs
 * You will rejoice over the great efficiency with which you identified all these entities and sally forth to apply them to whatever nefarious application you're planning
 
 ### Prerequisites
 
-#### Human Capital
-
-* If you're not familiar with best practices for annotating named entities or are not sure what that really means, it would be good to outline some consistent guidelines for how you will handle issues like ambiguity or embedded named entities ([This will link to a relevant site one day](https://www.youtube.com/watch?v=T0RvPYRRRbE)).
-
-* HER assumes that the user is not mortified by the thought of using a terminal or working from the command line. If you don't know what that means or you've never used the terminal, have no fear! This README will walk you through most everything you need to know and you can consult the Programming Historian's [Introduction to the Command Line](https://programminghistorian.org/en/lessons/intro-to-bash) to fill in any gaps.
-
-#### Operating System
-
-HER was developed and tested on Mac. It should run on any Linux system, though Windows will be problematic. Verifying and addressing this is on the to-do list.
-
-#### CRFsuite
-
-We will use the CRFsuite package behind-the-scenes to handle some of the machine learning. It can be installed on a Mac via *Homebrew*. If you don't already have Homebrew installed, run the following command:
-
-```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-With Homebrew already installed, CRFsuite can be installed on a Mac as follows:
-
-```
-brew tap brewsci/science
-brew install crfsuite
-```
-
-To install on other platforms, check the CRFsuite host [site](http://www.chokkan.org/software/crfsuite/).
-
-CRFsuite has been successfully installed if you can run the below command without generating an error message
-
-```
-crfsuite -h
-```
-
-#### Python 3
-
-If the below command tells you that you are using a version of Python less than 3.0, you need to get [Python 3](https://www.python.org/download/releases/3.0/) and/or make it the defualt version of Python.
-
-```
-python -V
-```
-
-The easiest way to get Python 3 is to create an *environment* using the *Miniconda* tool:
-* Download Miniconda from this [url](https://conda.io/miniconda.html`)
-* Verify that you have downloaded a file that starts with *Miniconda* and ends with *.sh*
-* In your terminal, type *bash* followed by a space, then drag said file into your terminal window, then press enter
-* Follow the prompts you are given
-* When installation is finished, close the terminal and re-open it before you can use Miniconda
-* Create your environment
-```
-conda create -n [your-environment-name] python=3.6 anaconda
-```
-* Activate your new environment
-```
-source activate [your-environment-name]
-```
-* Finally, verify that you are using the necessary version of Python
-```
-python -V
-```
-
-*Everytime you open a terminal, you will need to re-activate your environment to gauruntee that you're using the desired version of Python.*
-
-*If you ever get a* ModuleNotFoundError *while using HER, you can usually fix it with Miniconda like so:*
-```
-conda install -n [your-environment-name] [whatever-module-you're-missing]
-```
+Check out the [Prerequisites](https://github.com/alexerdmann/HER/blob/master/Scripts/Prerequisites.md) page for information on how to make sure HER will run on your machine.
 
 ### Defining Parameters
 
@@ -203,7 +138,7 @@ cp ../Data/Gazatteers/GEO.gaz Data/Gazatteers/GEO.gaz # Copies the sample gazatt
 
 ### Step 1: Preparing Your Texts
 
-If you have any previously annotated texts, open up the script located at *Scripts/preprocess_Davids_data.py* to see how I incorporated previously annotated texts into my work so as to preserve the annotations. My comments in the script should help you figure out how to adapt it to preserve any pre-existing annotations in your own data. Once you've adapted the script accordingly, save it as *Scripts/preprocess.py*. If you don't have previously annotated texts or the annotations are not useful, the original *Scripts/preprocess.py* script will suite you fine.
+If you have any previously annotated texts, open up the script located at *Scripts/Useful/preprocess_Davids_data.py* to see how I incorporated previously annotated texts into my work so as to preserve the annotations. My comments in the script should help you figure out how to adapt it to preserve any pre-existing annotations in your own data. Once you've adapted the script accordingly, save it as *Scripts/preprocess.py*. If you don't have previously annotated texts or the annotations are not useful, the original *Scripts/preprocess.py* script will suite you fine.
 
 Now, run the following command:
 ```

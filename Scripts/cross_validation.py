@@ -133,6 +133,7 @@ parser.add_argument('-fullCorpus', type=str, help='What data can we gather stati
 parser.add_argument('-identify_best_feats', type=bool, help='Should we identify the best set of features to train on?', required=False, default=False)
 parser.add_argument('-train_best', type=bool, help='Should we train the best model on testable + alwaysTrain as soon as we identify the best set of features?', required=False, default=False)
 parser.add_argument('-unannotated', type=str, help='Where is the unannotated corpus located?', required=False, default=None)
+parser.add_argument('-prepare_multiple_tests', type=str, help='Should we do feature engineering on other test sets as well? Pass all test sets in a single string delimited by two underscores, i.e., file1.txt__file2.txt.', required=False, default=None)
 
 args = parser.parse_args()
 
@@ -166,12 +167,12 @@ if '-identify_best_feats' in sys.argv:
 		# print('PREDICTED ACCURACY ON UNANNOTATED DATA: {}%\n\n'.format(str(round(100*bestScore,2))))
 		print('_________________________________\n')
 
+	if args.prepare_multiple_tests != None and args.prepare_multiple_tests != 'None':
+		multiple_tests = args.prepare_multiple_tests.split('__')
 
-
-
-
-
-
+		for unannotated in multiple_tests:
+			featureSet = ' '.join(bestSet)
+			os.system('python Scripts/addFeatures.py -corpus '+unannotated+' -fullCorpus '+fullCorpus+' -features '+featureSet+' -hist '+fullCorpus+'.hist -gazatteers Data/Gazatteers/* > '+unannotated+'.fts')
 
 
 

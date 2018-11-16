@@ -55,60 +55,31 @@ def prepare_for_glample(fileIn, fileOut, trainChars):
 
 	return trainChars
 
-def glample_lat_eval(Results, trainingData, name_of_project, train, test, trainChars):
+def glample_lat_eval(Results, trainingData, name_of_project, train, test, trainChars, multiple_tests):
 
-	testGWcrf = 'Data/Prepared/GW.test.crf'
-	testOvidCrf = 'Data/Prepared/Ovid.test.crf'
-	testPlinyCrf = 'Data/Prepared/Pliny.test.crf'
+	if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+		for ts in multiple_tests.split('__'):
 
-	testGW = '../tagger/dataset/GW.test'
-	testOvid = '../tagger/dataset/Ovid.test'
-	testPliny = '../tagger/dataset/Pliny.test'
+			fname = ts.split('/')[-1]
+			ts_g = ts+'.glample'
+			ts_g_p = ts_g+'.pred'
 
-	predGW = 'Data/Splits/GW.test.gPred'
-	predOvid = 'Data/Splits/Ovid.test.gPred'
-	predPliny = 'Data/Splits/Pliny.test.gPred'
+			# change from crf format to glample/conll format
+			trainChars = prepare_for_glample(ts, ts_g, trainChars)
 
-	# change from crf format to glample/conll format
-	trainChars = prepare_for_glample(testGWcrf, testGW, trainChars)
-	trainChars = prepare_for_glample(testOvidCrf, testOvid, trainChars)
-	trainChars = prepare_for_glample(testPlinyCrf, testPliny, trainChars)
+			# tag unannotated data -> crf format -> desired location
+			os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+ts_g+' '+ts_g_p)
 
-	# tag unannotated data -> crf format -> desired location
-	os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+testGW+' '+predGW)
-	# evaluate
-	F, prec, rec, total = custom_list_eval_inclusive(train, testGWcrf, predGW)
-	Results[trainingData]['Glample_GW_list-eval-in'] = [F, prec, rec, total]
-	F, prec, rec, total = custom_eval_inclusive(train, testGWcrf, predGW)
-	Results[trainingData]['Glample_GW_eval-in'] = [F, prec, rec, total]
-	biased_F = custom_eval_biased_recall_inclusive(train, testGWcrf, predGW)
-	Results[trainingData]['Glample_GW_biasedF'] = biased_F
-
-
-	# tag unannotated data -> crf format -> desired location
-	os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+testOvid+' '+predOvid)
-	# evaluate
-	F, prec, rec, total = custom_list_eval_inclusive(train, testOvidCrf, predOvid)
-	Results[trainingData]['Glample_Ovid_list-eval-in'] = [F, prec, rec, total]
-	F, prec, rec, total = custom_eval_inclusive(train, testOvidCrf, predOvid)
-	Results[trainingData]['Glample_Ovid_eval-in'] = [F, prec, rec, total]
-	biased_F = custom_eval_biased_recall_inclusive(train, testOvidCrf, predOvid)
-	Results[trainingData]['Glample_Ovid_biasedF'] = biased_F
-
-
-	# tag unannotated data -> crf format -> desired location
-	os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+testPliny+' '+predPliny)
-	# evaluate
-	F, prec, rec, total = custom_list_eval_inclusive(train, testPlinyCrf, predPliny)
-	Results[trainingData]['Glample_Pliny_list-eval-in'] = [F, prec, rec, total]
-	F, prec, rec, total = custom_eval_inclusive(train, testPlinyCrf, predPliny)
-	Results[trainingData]['Glample_Pliny_eval-in'] = [F, prec, rec, total]
-	biased_F = custom_eval_biased_recall_inclusive(train, testPlinyCrf, predPliny)
-	Results[trainingData]['Glample_Pliny_biasedF'] = biased_F
+			F, prec, rec, total = custom_list_eval_exclusive(ts, ts_g_p)
+			Results[trainingData][fname+'_Glample_list-eval-ex'] = [F, prec, rec, total]
+			F, prec, rec, total = custom_eval_exclusive(ts, ts_g_p)
+			Results[trainingData][fname+'_Glample_eval-ex'] = [F, prec, rec, total]
+			biased_F, total = custom_eval_biased_recall_exclusive(ts, ts_g_p)
+			Results[trainingData][fname+'_Glample_biasedF-ex'] = biased_F
 
 	return Results
 
-def glample_eval(seed_size, name_of_project, preTrained, Results, trainingData, train, test, n_epochs):
+def glample_eval(seed_size, name_of_project, preTrained, Results, trainingData, train, test, n_epochs, multiple_tests):
 
 	trainSet = '../tagger/dataset/'+name_of_project+'.train'
 	devSet = '../tagger/dataset/'+name_of_project+'.dev'
@@ -126,27 +97,59 @@ def glample_eval(seed_size, name_of_project, preTrained, Results, trainingData, 
 	trainChars = prepare_for_glample('Data/Splits/fullCorpus.seed-'+seed_size+'.seed', devSet, trainChars)
 	trainChars = prepare_for_glample('Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated', testSet, trainChars)
 
-	# train but don't let it do inference on the test set yet
 	os.system('sh Scripts/train_glample.sh '+name_of_project+' '+trainSet+' '+devSet+' '+devSet+' '+preTrained+' '+n_epochs)
 
-	# tag the unannotated data, convert to .crf, send to desired location
-	os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+testSet+' '+gPred)
+	trainedProperly = True
+	try:
+		assert os.path.isfile('../tagger/models/'+name_of_project+'/green_flag.txt')
+	except AssertionError:
+		print()
+		print('NOT ENOUGH DATA FOR GLAMPLE MODEL')
+		print(trainingData)
+		print('SKIPPING NEURAL TRAINING AND EVALUATION THIS ROUND')
+		print()
+		trainedProperly = False
 
-	# evaluate
-	F, prec, rec, total = custom_list_eval_inclusive(train, test, gPred)
-	Results[trainingData]['Glample_list-eval-in'] = [F, prec, rec, total]
-	F, prec, rec, total = custom_eval_inclusive(train, test, gPred)
-	Results[trainingData]['Glample_eval-in'] = [F, prec, rec, total]
-	biased_F = custom_eval_biased_recall_inclusive(train, test, gPred)
-	Results[trainingData]['Glample_biasedF'] = biased_F
+	if trainedProperly:
+		# tag the unannotated data, convert to .crf, send to desired location
+		os.system('sh Scripts/tag_glample.sh '+name_of_project+' '+testSet+' '+gPred)
 
-	if 'Latin' in name_of_project: # re-run evaluations over each test set
+		# evaluate
+		F, prec, rec, total = custom_list_eval_inclusive(train, test, gPred)
+		Results[trainingData]['Glample_list-eval-in'] = [F, prec, rec, total]
+		F, prec, rec, total = custom_eval_inclusive(train, test, gPred)
+		Results[trainingData]['Glample_eval-in'] = [F, prec, rec, total]
+		biased_F = custom_eval_biased_recall_inclusive(train, test, gPred)
+		Results[trainingData]['Glample_biasedF'] = biased_F
 
-		Results = glample_lat_eval(Results, trainingData, name_of_project, train, test, trainChars)
+		if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+
+			Results = glample_lat_eval(Results, trainingData, name_of_project, train, test, trainChars, multiple_tests)
+
+	else:
+
+		Results[trainingData]['Glample_list-eval-in'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_eval-in'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_biasedF'] = 0
+
+		Results[trainingData]['Glample_list-eval-ex'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_eval-ex'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_biasedF-ex'] = 0
+
+		if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+			for ts in multiple_tests.split('__'):
+				fname = ts.split('/')[-1]
+				Results[trainingData][fname+'_Glample_list-eval-in'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_eval-in'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_biasedF'] = 0
+
+				Results[trainingData][fname+'_Glample_list-eval-ex'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_eval-ex'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_biasedF-ex'] = 0
 
 	return Results
 
-def record_results(train, test, predictions, Results, seed_size, go, name_of_project, preTrained, trainingData, n_epochs):
+def record_results(train, test, predictions, Results, seed_size, go, name_of_project, preTrained, trainingData, n_epochs, multiple_tests):
 
 	for fn in [train,test,predictions]:
 		os.system("sed '/./,$!d' "+fn+" > "+fn+".2")
@@ -154,125 +157,61 @@ def record_results(train, test, predictions, Results, seed_size, go, name_of_pro
 
 	F, prec, rec, total = custom_list_eval_inclusive(train, test, predictions)
 	Results[trainingData]['list-eval-in'] = [F, prec, rec, total]
-	# F, prec, rec, total = custom_list_eval_exclusive(test, predictions)
-	# Results[trainingData]['list-eval-ex'] = [F, prec, rec, total]
 	F, prec, rec, total = custom_eval_inclusive(train, test, predictions)
 	Results[trainingData]['eval-in'] = [F, prec, rec, total]
-	# F, prec, rec, total = custom_eval_exclusive(test, predictions)
-	# Results[trainingData]['eval-out'] = [F, prec, rec, total]
 	biased_F = custom_eval_biased_recall_inclusive(train, test, predictions)
 	Results[trainingData]['biased_F'] = biased_F
+
+	if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+		for ts in multiple_tests.split('__'):
+			fname = ts.split('/')[-1]
+
+			### tag ts with model
+			os.system('crfsuite tag -m Models/CRF/best_seed.cls '+ts+'.fts > '+ts+'.pred')
+
+			F, prec, rec, total = custom_list_eval_exclusive(ts, ts+'.pred')
+			Results[trainingData][fname+'_list-eval-ex'] = [F, prec, rec, total]
+			F, prec, rec, total = custom_eval_exclusive(ts, ts+'.pred')
+			Results[trainingData][fname+'_eval-ex'] = [F, prec, rec, total]
+			biased_F, total = custom_eval_biased_recall_exclusive(ts, ts+'.pred')
+			Results[trainingData][fname+'_biasedF-ex'] = biased_F
 
 
 	### RUN GLAMPLE MODEL AND EVALUATE -> change this to always train and seed, pass go from outside function
 
-	try:
+	if go:
+		Results = glample_eval(seed_size, name_of_project, preTrained, Results, trainingData, train, test, n_epochs, multiple_tests)
 
-		if go:
-			Results = glample_eval(seed_size, name_of_project, preTrained, Results, trainingData, train, test, n_epochs)
-
-		else:
-			Results[trainingData]['Glample_list-eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_biasedF'] = 0
-
-			if 'Latin' in name_of_project: # re-run evaluations over each test set
-				Results[trainingData]['Glample_GW_list-eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_GW_eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_GW_biasedF'] = 0
-
-				Results[trainingData]['Glample_Ovid_list-eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_Ovid_eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_Ovid_biasedF'] = 0
-
-				Results[trainingData]['Glample_Pliny_list-eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_Pliny_eval-in'] = [0, 0, 0, 0]
-				Results[trainingData]['Glample_Pliny_biasedF'] = 0
-
-	except KeyError:
-
+	else:
 		Results[trainingData]['Glample_list-eval-in'] = [0, 0, 0, 0]
 		Results[trainingData]['Glample_eval-in'] = [0, 0, 0, 0]
 		Results[trainingData]['Glample_biasedF'] = 0
 
-		if 'Latin' in name_of_project: # re-run evaluations over each test set
-			Results[trainingData]['Glample_GW_list-eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_GW_eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_GW_biasedF'] = 0
+		Results[trainingData]['Glample_list-eval-ex'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_eval-ex'] = [0, 0, 0, 0]
+		Results[trainingData]['Glample_biasedF-ex'] = 0
 
-			Results[trainingData]['Glample_Ovid_list-eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_Ovid_eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_Ovid_biasedF'] = 0
+		if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+			for ts in multiple_tests.split('__'):
+				fname = ts.split('/')[-1]
+				Results[trainingData][fname+'_Glample_list-eval-in'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_eval-in'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_biasedF'] = 0
 
-			Results[trainingData]['Glample_Pliny_list-eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_Pliny_eval-in'] = [0, 0, 0, 0]
-			Results[trainingData]['Glample_Pliny_biasedF'] = 0
-
+				Results[trainingData][fname+'_Glample_list-eval-ex'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_eval-ex'] = [0, 0, 0, 0]
+				Results[trainingData][fname+'_Glample_biasedF-ex'] = 0
 
 		print()
 		print('NOT ENOUGH DATA FOR GLAMPLE MODEL')
 		print(trainingData)
 		print()
 
-
 	return Results
 
-# def print_out(sort_method, trainingData, trainingDataList, Results, name_of_project):
-
-# 	### PRINT OUT ALL THE RECORDED ACCURACIES AT EACH STEP WITH EACH METRIC
-# 	print(sort_method.upper()+'\nAMOUNT OF TRAINING DATA\nRECALL-BIASED-F\nlist-F\tP,R\t\ttext-F\tP,R\n')
-# 	for trainingData in trainingDataList:
-# 		print('{}'.format(trainingData))
-# 		print('{}'.format(str(round(100*Results[trainingData]['biased_F'],2))))
-# 		printline = '\t'
-# 		for evaluation in ['list-eval-in','eval-in']:
-
-# 			l = Results[trainingData][evaluation]
-# 			F = l[0]
-# 			p = l[1]
-# 			r = l[2]
-# 			t = l[3]
-# 			printline += '{}\t{}, {}'.format(str(int(round(100*F,0))),str(int(round(100*p,0))),str(int(round(100*r,0))))
-# 			if evaluation == 'list-eval-in':
-# 				printline += '\t\t'
-# 		print(printline)
-# 			# print('\t{}: F (P, R) (COUNT): {}  ({}  {})  ({})'.format(evaluation, str(round(F, 2)), str(round(p, 2)), str(round(r, 2)), str(t)))
-
-# 	### PRINT OUT ALL THE RECORDED ACCURACIES AT EACH STEP WITH GLAMPLE MODEL
-# 	print('___________________________________________\n'+sort_method.upper()+' -- GLAMPLE\nAMOUNT OF TRAINING DATA\nGLAMPLE RECALL-BIASED-F\nlist-F\tP,R\t\ttext-F\tP,R\n(GW, OVID, PLINY)\n')
-# 	for trainingData in trainingDataList:
-
-# 		### RECORDING BIASED F SCORES
-# 		print('{}'.format(trainingData))
-# 		print('{}'.format(str(round(100*Results[trainingData]['Glample_biasedF'],2))))
-# 		if 'Latin' in name_of_project:
-# 			print('{}'.format(str(round(100*Results[trainingData]['Glample_GW_biasedF'],2))))
-# 			print('{}'.format(str(round(100*Results[trainingData]['Glample_Ovid_biasedF'],2))))
-# 			print('{}'.format(str(round(100*Results[trainingData]['Glample_Pliny_biasedF'],2))))
-# 		printline = '\t'
-
-# 		if 'Latin' in name_of_project:
-# 			evalList = ['Glample_list-eval-in','Glample_eval-in','Glample_GW_list-eval-in','Glample_GW_eval-in','Glample_Ovid_list-eval-in','Glample_Ovid_eval-in','Glample_Pliny_list-eval-in','Glample_Pliny_eval-in']
-# 		else:
-# 			evalList = ['Glample_list-eval-in','Glample_eval-in']
-
-# 		for evaluation in evalList:
-
-# 			l = Results[trainingData][evaluation]
-# 			F = l[0]
-# 			p = l[1]
-# 			r = l[2]
-# 			t = l[3]
-# 			printline += '{}\t{}, {}'.format(str(int(round(100*F,0))),str(int(round(100*p,0))),str(int(round(100*r,0))))
-# 			if evaluation in ['Glample_list-eval-in','Glample_GW_list-eval-in','Glample_Ovid_list-eval-in','Glample_Pliny_list-eval-in']:
-# 				printline += '\t\t'
-# 		print(printline)
-# 			# print('\t{}: F (P, R) (COUNT): {}  ({}  {})  ({})'.format(evaluation, str(round(F, 2)), str(round(p, 2)), str(round(r, 2)), str(t)))
-
-def print_out(sort_method, trainingData, trainingDataList, Results, name_of_project):
+def print_out(sort_method, trainingData, trainingDataList, Results, name_of_project, multiple_tests):
 
 	### PRINT OUT ALL THE RECORDED ACCURACIES AT EACH STEP WITH EACH METRIC
-
 	# context eval inclusive
 	printline = "CONTEXT_EVAL_INCLUSIVE"
 	for x in trainingDataList:
@@ -318,39 +257,56 @@ def print_out(sort_method, trainingData, trainingDataList, Results, name_of_proj
 	print(printline)
 	print('\n')
 
+	###############################
+
+	if multiple_tests != None and multiple_tests != 'None': # re-run evaluations over each test set
+		for ts in multiple_tests.split('__'):
+			fname = ts.split('/')[-1]
+				
+			# context eval test
+			printline = "{}_CONTEXT_EVAL_EXCLUSIVE".format(fname)
+			for x in trainingDataList:
+				printline += '\t'
+				printline += str(x)
+			print(printline)
+			# shallow results
+			printline = sort_method
+			for x in trainingDataList:
+				printline += '\t'
+				l = Results[x][fname+'_eval-ex']
+				printline += '{} ({}, {})'.format(str(round(100*l[0],2)), str(round(100*l[1],2)), str(round(100*l[2],2)))
+			print(printline)
+			# neural inference results
+			printline = '{}_neural'.format(sort_method)
+			for x in trainingDataList:
+				printline += '\t'
+				l = Results[x][fname+'_Glample_eval-ex']
+				printline += '{} ({}, {})'.format(str(round(100*l[0],2)), str(round(100*l[1],2)), str(round(100*l[2],2)))
+			print(printline)
+			print('\n')
 
 
-	# context eval test
-	printline = "CONTEXT_EVAL_TEST"
-	for x in trainingDataList:
-		printline += '\t'
-		printline += str(x)
-	print(printline)
-	# neural inference results
-	printline = '{}_neural'.format(sort_method)
-	for x in trainingDataList:
-		printline += '\t'
-		l = Results[x]
-		printline += '{}, {}, {}'.format(str(round(100*l['Glample_GW_eval-in'][0],2)), str(round(100*l['Glample_Pliny_eval-in'][0],2)), str(round(100*l['Glample_Ovid_eval-in'][0],2)))
-	print(printline)
-	print('\n')
-
-	# list eval test
-	printline = "LIST_EVAL_TEST"
-	for x in trainingDataList:
-		printline += '\t'
-		printline += str(x)
-	print(printline)
-	# neural inference results
-	printline = '{}_neural'.format(sort_method)
-	for x in trainingDataList:
-		printline += '\t'
-		l = Results[x]
-		printline += '{}, {}, {}'.format(str(round(100*l['Glample_GW_list-eval-in'][0],2)), str(round(100*l['Glample_Pliny_list-eval-in'][0],2)), str(round(100*l['Glample_Ovid_list-eval-in'][0],2)))
-	print(printline)
-	print('\n')
-
-
+			# context eval test
+			printline = "{}_LIST_EVAL_EXCLUSIVE".format(fname)
+			for x in trainingDataList:
+				printline += '\t'
+				printline += str(x)
+			print(printline)
+			# shallow results
+			printline = sort_method
+			for x in trainingDataList:
+				printline += '\t'
+				l = Results[x][fname+'_list-eval-ex']
+				printline += '{} ({}, {})'.format(str(round(100*l[0],2)), str(round(100*l[1],2)), str(round(100*l[2],2)))
+			print(printline)
+			# neural inference results
+			printline = '{}_neural'.format(sort_method)
+			for x in trainingDataList:
+				printline += '\t'
+				l = Results[x][fname+'_Glample_list-eval-ex']
+				printline += '{} ({}, {})'.format(str(round(100*l[0],2)), str(round(100*l[1],2)), str(round(100*l[2],2)))
+			print(printline)
+			print('\n')
 
 
 
@@ -366,7 +322,8 @@ sort_method = sys.argv[3]
 processing_script = sys.argv[4]
 lg = sys.argv[5]
 entities = sys.argv[6]
-add_lines = sys.argv[7:]
+multiple_tests = sys.argv[7]
+add_lines = sys.argv[8:]
 
 trainingDataList = []
 Results = {}
@@ -382,33 +339,32 @@ elif 'Greek' in name_of_project:
 	preTrained = "../../Embeddings/preTrained.grk.vec"
 elif 'medFrench' in name_of_project:
 	preTrained = "../../Embeddings/preTrained.mf.vec"
-elif 'GermEval' in name_of_project:
+elif 'German' in name_of_project:
 	preTrained = "../../Embeddings/preTrained.de.vec"
 elif 'French' in name_of_project:
 	preTrained = "../../Embeddings/preTrained.fr.vec"
 elif 'English' in name_of_project:
 	preTrained = "../../Embeddings/preTrained.en.vec"
-
-if preTrained != '""':
-	os.system('gunzip '+preTrained+'.gz')
+elif 'Spanish' in name_of_project:
+	preTrained = "../../Embeddings/preTrained.es.vec"
 
 ### RUN THE DATA THROUGH GETTING THE RANDOM SEED
-os.system('sh ../Scripts/oracle_1-4.sh '+name_of_project+' '+seed_size+' '+sort_method+' '+processing_script+' '+lg+' '+entities)
+os.system('sh ../Scripts/oracle_1-4_glample.sh '+name_of_project+' '+seed_size+' '+sort_method+' '+processing_script+' '+lg+' '+entities+' '+multiple_tests)
 
 ### RECORD ACCURACY AFTER GETTING RANDOM SEED
 train = 'Data/Splits/fullCorpus.seed-'+seed_size+'.seed.fts'
 test = 'Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated.fts'
 predictions = 'Data/Splits/predictions_from_seed.txt'
 
-Results = record_results(train, test, predictions, Results, seed_size, False, name_of_project, preTrained, trainingData, "5")
+Results = record_results(train, test, predictions, Results, seed_size, False, name_of_project, preTrained, trainingData, "5", multiple_tests)
 
 ### RUN THE DATA THROUGH CHECKS AND RERANK
 for lines_annotated in add_lines:	
-	os.system('sh ../Scripts/oracle_5-7.sh '+seed_size+' '+sort_method+' '+lines_annotated+' '+entities)
+	os.system('sh ../Scripts/oracle_glample_5-7.sh '+seed_size+' '+sort_method+' '+lines_annotated+' '+entities+' '+multiple_tests)
 	trainingData += ' & '+lines_annotated
 	Results[trainingData] = {}
 	trainingDataList.append(trainingData)
-	Results = record_results(train, test, predictions, Results, seed_size, True, name_of_project, preTrained, trainingData, "5")
+	Results = record_results(train, test, predictions, Results, seed_size, True, name_of_project, preTrained, trainingData, "5", multiple_tests)
 
 # ### RUN THE DATA THROUGH ONE FINAL SET OF ANNOTATIONS
 # os.system('sh Scripts/update_crossValidate_tag_get_final_results.sh '+add_lines[-1]+' Models/RankedSents/fullCorpus.seed-'+seed_size+'.'+sort_method+' Data/Splits/fullCorpus.seed-'+seed_size+'.alwaysTrain Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated Data/Splits/fullCorpus.seed-'+seed_size+'.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt')
@@ -421,9 +377,6 @@ for lines_annotated in add_lines:
 
 ############################################################################
 
-print_out(sort_method, trainingData, trainingDataList, Results, name_of_project)
-
-if preTrained != '""':
-	os.system('gzip '+preTrained)
+print_out(sort_method, trainingData, trainingDataList, Results, name_of_project, multiple_tests)
 
 
