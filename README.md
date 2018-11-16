@@ -210,7 +210,7 @@ Consider how much improvement you've gotten since last time relative to the amou
 
 Otherwise, repeat Step 6 as needed.
 
-### Step 8: Take Off Your Digital Hat And Put On Your Humanist Hat
+### Step 7: Take Off Your Digital Hat And Put On Your Humanist Hat
 
 Regardless of how much post editing lies in your future, I hope HER has served you well and the output of this process has facilitated your project goals. Godspeed!
 
