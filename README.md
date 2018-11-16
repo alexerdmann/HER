@@ -42,6 +42,8 @@ For the record, I acknowledge that I have no idea how to spell gazatteer; I'm ju
 
 ## Usage
 
+Once you've loaded your data and defined your *name_of_project*, *lg*, *entities*, and *sortMethod* variables, we're ready to get started!
+
 ### Step 1: Preparing Your Texts
 
 If you have any previously annotated texts, open up the script located at *Scripts/Useful/preprocess_Davids_data.py* to see how I incorporated previously annotated texts into my work so as to preserve the annotations. My comments in the script should help you figure out how to adapt it to preserve any pre-existing annotations in your own data. Once you've adapted the script accordingly, save it as *Scripts/preprocess.py*. If you don't have previously annotated texts or the annotations are not useful, the original *Scripts/preprocess.py* script will suite you fine.
