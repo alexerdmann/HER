@@ -27,7 +27,15 @@ brew install crfsuite
 
 To install on other platforms, check the CRFsuite host [site](http://www.chokkan.org/software/crfsuite/).
 
-CRFsuite has been successfully installed if you can run the below command without generating an error message
+If you are having trouble with installation, you can take care of this during the *Setting Up Your Work Space* step. After you've downloaded HER and cd'ed into the *HER/* directory, go through all the scripts in the *Scripts/* subdirectory, search for the command *crfsuite*, and replace it with the absolute path to the prepackaged version of CRFsuite included in the download. To get that absolute path, from the main *HER/* directory, type the following:
+
+```
+echo $PWD
+```
+
+This will give you the absolute path to that directory, so it should end in */HER*. Simply add */Scripts/crsuite.prog* to the end of that path and you have the absolute path to the prepackaged crfsuite. This should address most installation issues on MAC and Ubuntu, though it is certainly not the most elegant solution.
+
+CRFsuite has been successfully installed if you can run the below command without generating an error message (of course, if you had to replace crfsuite with an absolute path, do so in the below command as well to ensure it is working)
 
 ```
 crfsuite -h
