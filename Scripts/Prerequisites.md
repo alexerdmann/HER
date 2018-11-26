@@ -27,7 +27,8 @@ brew install crfsuite
 
 To install on other platforms, check the CRFsuite host [site](http://www.chokkan.org/software/crfsuite/).
 
-If you are having trouble with installation, you can take care of this during the *Setting Up Your Work Space* step. After you've downloaded HER and cd'ed into the *HER/* directory, go through all the scripts in the *Scripts/* subdirectory, search for the command *crfsuite*, and replace it with the absolute path to the prepackaged version of CRFsuite included in the download. To get that absolute path, from the main *HER/* directory, type the following:
+If you are having trouble with installation, you can take care of this during the [Set Up](https://github.com/alexerdmann/HER/blob/master/Scripts/Set_Up.md)
+step. After you've downloaded HER and cd'ed into the *HER/* directory, go through all the scripts in the *Scripts/* subdirectory, search for the command *crfsuite*, and replace it with the absolute path to the prepackaged version of CRFsuite included in the download. To get that absolute path, from the main *HER/* directory, type the following:
 
 ```
 echo $PWD
