@@ -1,17 +1,17 @@
 # HER: Humanities Entity Recognizer
 
-HER is an easy-to-use tool designed to help Digital Humanists automate much of the process of identifying entities like persons or places in large text corpora. She robustly handles different types of entities, different languages, styles, and domains, and varying levels of structure in texts.
+HER is an easy-to-use tool designed to help Digital Humanists automate much of the process of identifying entities like persons or places in large text corpora. It robustly handles different types of entities, different languages, styles, and domains, and varying levels of structure in texts.
 
 ## Getting Started
 
 ### Overview
 
-HER will walk you through the process of tailoring a system to automatically identify and distinguish whatever types of entities you desire in whatever texts you provide her with. The process, generally speaking, will be as follows:
+HER will walk you through the process of tailoring a system to automatically identify and distinguish whatever types of entities you desire in whatever texts you provide. The process, generally speaking, will be as follows:
 
 * You give HER all relevant data and define the types of entities you want to identify in said data
-* She prompts you to annotate these types of entities in a small *seed* sample text
-* Based on said seed, she ranks all sentences in the corpus that you have not yet annotated based on how useful they should be for helping HER to learn to identify these entity types automatically
-* She requests you to start annotating the ranked sentences
+* HER prompts you to annotate these types of entities in a small *seed* sample text
+* Based on said seed, the system ranks all sentences in the corpus that you have not yet annotated based on how useful they should be for helping HER to learn to identify these entity types automatically
+* HER requests you to start annotating the ranked sentences
 * You can stop annotating at any time and check if HER has learned to identify entities with acceptable accuracy by requesting HER to attempt to automatically find all entities in the remaining unannotated sentences and compile a list of all unique, identified entities
 * You will evaluate the quality of these outputs and decide if your manual labor seems more valuably spent annotating more sentences or post editing said outputs
 * You will rejoice over the great efficiency with which you identified all these entities and sally forth to apply them to whatever nefarious application you're planning
@@ -26,11 +26,11 @@ To verify that your environment is amenable to HER, you can run the commands fou
 
 ### Defining Parameters
 
-Tell HER what language you're working on, what entity labels you want to use, and what algorithm you want her to use to find more of those entities. Check out the [Parameters](https://github.com/alexerdmann/HER/blob/master/Scripts/Defining_Parameters.md) page for more information.
+Tell HER what language you're working on, what entity labels you want to use, and what algorithm you want HER to use to find more of those entities. Check out the [Parameters](https://github.com/alexerdmann/HER/blob/master/Scripts/Defining_Parameters.md) page for more information.
 
 ### Setting Up Your Work Space
 
-Set us is simple. Just clone the github repository, cd into it, come up with a name for your project, then run the commands below. After that, just cp your corpus file(s) into *Data/Original/* and if you have any gazetteers, put them in *Data/Gazatteers/*. For more information, especially regarding filenaming conventions, check out the long-winded [Set Up](https://github.com/alexerdmann/HER/blob/master/Scripts/Set_Up.md) explanation.
+Set up is simple. Just clone the github repository, cd into it, come up with a name for your project, then run the commands below. After that, just cp your corpus file(s) into *Data/Original/* and if you have any gazetteers, put them in *Data/Gazatteers/*. For more information, especially regarding filenaming conventions, check out the long-winded [Set Up](https://github.com/alexerdmann/HER/blob/master/Scripts/Set_Up.md) explanation.
 
 ```
 name_of_project=[name-of-your-project]
@@ -62,11 +62,11 @@ The final output of this script is a document containing the entire fully prepar
 
 ### Step 2: Get A Seed
 
-We help the computer get started on its path to learning how to identify these entities by manually annotating, or marking their presence, in a small *seed* sample of sentences from the corpus.
+We help HER get started on the path to learning how to identify these entities by manually annotating, or marking their presence, in a small *seed* sample of sentences from the corpus.
 
 #### Assuming that you have no previously annotated data
 
-We will randomly extract sentences to use in your seed. This is preferred, because a deterministic seed may reflect a systematically distinct distribution of named entities in the corpus.
+We will randomly extract sentences to use in your seed. This is preferred, because a deterministic seed may reflect a systematically biased distribution of named entities in the corpus.
 
 The ideal seed size depends on a number of factors. We can easily adjust seed size later, but for now, let's set it to 200 sentences as follows:
 
@@ -74,7 +74,7 @@ The ideal seed size depends on a number of factors. We can easily adjust seed si
 seed_size=200
 ```
 
-If you have gazatteers with lots helpful entities from your corpus, annotation will go more easily, which might motivate you to do a larger seed, though it also might mean that you don't need such a large seed to get HER going.
+If you have gazatteers with lots of helpful entities from your corpus, annotation will go more easily, which might motivate you to do a larger seed, though it also might mean that you don't need such a large seed to get HER going.
 
 If your corpus is very densely packed with entities, you could probably redefine *seed_size* to be less than 200 (and *vice versa*), however, if the types of entities you want to identify are many or finely granular, you might want to increase *seed_size* (and *vice versa*).
 
@@ -90,7 +90,7 @@ Follow the [Deterministic Seed Instructions](https://github.com/alexerdmann/HER/
 
 ### Step 3 Manual Annotation Of The Seed
 
-The seed sentences are located at: *Data/Splits/fullCorpus.seed-$seed_size.seed*. The file contains one word (well really token, because punctuation and clitics will likely take their own lines) per line with a single blank line between sentences. The line is tab separated with the *label* (also refered to as a *tag*) in the first column, the word itself in the second, and any other features we might later generate will occupy subsequent columns. By default, the *label* will be *0* for every word, meaning that it is not an entity or at least has not been annotated (manually not automatically) as one yet.
+The seed sentences are located at: *Data/Splits/fullCorpus.seed-$seed_size.seed*. The file contains one word (well really token, because punctuation and clitics will likely take their own lines) per line with a single blank line between sentences. The line is tab separated with the *label* (also refered to as a *tag*) in the first column, the word itself in the second, and any other features we might later generate will occupy subsequent columns. By default, the *label* will be *0* for every word, meaning that it is not an entity or at least has not been annotated (manually not automatically) as one yet (if you are familiar with the *BIO* annotation scheme, please note that we are using a zero (0), not a capital letter (O), though this should probably be changed soon in order to fully conform to the popular *BIO* scheme).
 
 In this step, we will identify all words that are entities and change their labels, systematically. Specifically, the label will be composed by joining the relevant entity type (necessarily one of the types defined in *entities*) and the letter *B* or *I* with a dash. For example, if I come across the word *Paris* in my corpus, I would want to label it as *GEO-B*, where I use *B* to indicate that it is the beginning of an entity. If I come across the words *de*, *New*, *York*, and *.* in a sequence, I would want to label them *0*, *GEO-B*, *GEO-I*, and *0* respectively, where *I* denotes that the present entity has not already terminated. 
 
@@ -218,7 +218,7 @@ Regardless of how much post editing lies in your future, I hope HER has served y
 
 HER is under continuous development supported by the [Herodotos Project](https://u.osu.edu/herodotos/) and [NYU-PSL Spatial Humanities Partnership](https://wp.nyu.edu/nyupslgeo/). We gratefully acknowledge [Moses](http://www.statmt.org/moses/), from whom we borrowed some code, and [Abraham](https://en.wikipedia.org/wiki/Abraham), from whom we derived three major religions. 
 
-If you find HER useful, please cite the below work from which she was adapted:
+If you find HER useful, please cite the below work from which the system was adapted:
 
 * Erdmann et al., 2016 [Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012)
 
