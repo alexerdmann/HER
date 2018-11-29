@@ -2,6 +2,12 @@
 from __future__ import print_function
 from __future__ import division
 
+""" 
+we should consider switching the preprocessing to something more elegant, like beautiful soup
+conda install -c anaconda beautifulsoup4
+from bs4 import BeautifulSoup 
+"""
+
 """ USERS WILL NEED TO DEFINE WHAT TYPES OF ANNOTATIONS THEY WANT TO PRESERVE IF THERE IS PRE EXISTING ANNOTATION """
 
 import sys
