@@ -21,6 +21,10 @@ def unrankedSort(corpus):
 		else:
 			sent.append(line)
 	fileinput.close()
+
+	if len(sent) > 0:
+		rankedSents.append(sent)
+
 	return rankedSents
 
 def randomSort(corpus):
