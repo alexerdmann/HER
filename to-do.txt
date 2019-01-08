@@ -1,0 +1,19 @@
+ALTER PREPROCESSING STEP to be less hacky and to preserve features, not just labels
+		i.e., metadata from the OCR output html or previously existing linguistic analysis
+		The issue is analyzers and disambiguators will apply their own tokenization which will have to be aligned
+
+SCRIPT TO MAP OUTPUT BACK TO ORIGINAL RAW INPUT .TXT OR .XML FILES
+
+HANDLE HTML FILES IN PREPROCESSING
+
+ADDITIONAL OUTPUT: COMBINE THE FINAL LIST AND THE GAZATTEER
+	i.e., a potentially imperfect but maximal list of in+out corpus NE’s
+
+ALIGN OUTPUT BACK TO PREPARED INPUT AND ADD ID COLUMN
+	id specifies at which step each word was annotated
+		(seed, 1,2,…n, auto) where auto means never manually annotated
+	This is for David’s analysis of from which texts can we learn the most
+		about the behavior of NE’s in the full corpus and how does
+		this compare to the simpler question of from which texts do we
+		get the most NE’s or the highest NE density?
+		
