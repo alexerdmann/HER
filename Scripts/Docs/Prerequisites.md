@@ -71,7 +71,7 @@ python -V
 ```
 
 The easiest way to get Python 3 is to create an *environment* using the *Miniconda* tool:
-* Download Miniconda from this [url](https://conda.io/miniconda.html`)
+* Download Miniconda from this [url](https://conda.io/miniconda.html)
 * Verify that you have downloaded a file that starts with *Miniconda* and ends with *.sh*
 * In your terminal, type *bash* followed by a space, then drag said file into your terminal window, then press enter
 * Follow the prompts you are given
