@@ -151,7 +151,10 @@ for s in sents:
 			without1 = True
 
 
-
+out_withoutNEs_1.close()
+out_withNEs_1.close()
+out_withoutNEs_2.close()
+out_withNEs_2.close()
 
 
 

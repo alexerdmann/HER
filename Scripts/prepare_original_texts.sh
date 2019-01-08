@@ -1,3 +1,5 @@
+#!/bin/bash
+
 preprocessScript=$1
 lg=$2
 

@@ -21,6 +21,9 @@ def unrankedSort(corpus):
 			sent.append(line)
 	fileinput.close()
 
+	if len(sent) > 0:
+		rankedSents.append(sent)
+
 	return rankedSents
 
 annotated = sys.argv[1]

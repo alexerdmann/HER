@@ -19,9 +19,12 @@ if extension == 'xml':
 
 	""" THE USER SHOULD DEFINE WHAT ANNOTATIONS THEY WANT TO PRESERVE HERE """
 	labelMapping = {}
-	# for x in 'place','oronym','building','geographical':
-	# 	segStart = '<name type="'+x+'">'
-	# 	labelMapping[segStart] = '$'
+	""" THE BELOW BLOCK WILL IDENTIFY EVERY STRING WHICH IS LABELED AS place, oronym, building, or geographical IN THE XML AND MAPS THEM TO THE SAME, YET TO BE DEFINED TYPE OF ENTITY"""
+	""" THE USER MUST ALSO EDIT THE TOP OF Scripts/prepare4crf.py TO MAP EACH SYMBOL (HERE, ONLY $) TO THE CORRESPONDING ENTITY TYPE FROM THE EARLIER DEFINED entities VARIABLE """
+	for x in 'place','oronym','building','geographical':
+		segStart = '<name type="'+x+'">'
+		labelMapping[segStart] = '$'
+	""" REPEAT THE ABOVE BLOCK FOR ALL TYPES OF NAMED ENTITIES YOU WANT TO IDENTIFY, GIVING EACH IT'S OWN UNIQUE IDENTIFIER (THE IDENTIFIER SHOULD BE SOME RARE CHARACTER NOT APPEARING IN YOUR CORPUS) """
 	segEnd = '</name>'
 	bodyStart = '<p>'
 	bodyStop = '</p>'
@@ -31,7 +34,6 @@ if extension == 'xml':
 	body = False
 	lookingForClosure = None
 
-	### MAKE THE START AND STOPS OF BODY TEXT MORE RECOGNIZABLE VIA WORD SPLITTING
 	for line in file:
 		for x in labelMapping:
 			line = line.replace(labelMapping[x],'')
@@ -42,13 +44,11 @@ if extension == 'xml':
 			segStarts[labelMapping[segStart]] = True
 		words = []
 
-		### GO THROUGH EACH WORD AND DETERMINE IF IT IS IN BODY OR NOT
 		for word in line.split():
 			if body:
 				if word == bodyStop:
 					body = False
 				else:
-					# PRESERVE ANNOTATIONS WITH A SINGLE CHARACTER MARKER, SPACE SEPARATED, BEFORE AND AFTER THE NAMED ENTITY
 					if word in segStarts:
 						lookingForClosure = word
 						words.append(word)
@@ -62,7 +62,6 @@ if extension == 'xml':
 			elif word == bodyStart:
 				body = True
 
-		# FINALLY WE PROCESS REMAINING TEXT BY CHARACTER REMOVING META DATA WE DON'T NEED
 		text = True
 		if len(words) > 0:
 			sentence = ' '.join(words)
@@ -85,29 +84,29 @@ elif extension == 'txt':
 	
 	""" THE USER SHOULD DEFINE WHAT ANNOTATIONS THEY WANT TO PRESERVE HERE """
 	labelMapping = {}
-	# labelMapping['**'] = '$'
+	labelMapping['**'] = '$'
 	labels = {}
-	# labels['$'] = True
+	labels['$'] = True
 	# unfortunately raw text means we have to assume that consecutively marked words are the same named entity
 	###########################################################################
 
 
 	# THIS IS A HACKY WAY OF IGNORING SOME METADATA THAT LEAKED INTO THE RAW TEXT.. BUT IT CAN BE ADAPTED TO USERS' TEXTS OR SIMPLY COMMENTED OUT AND THE FOLLOWING BLOCK COMMENTED IN
-	# body = False
-	# for line in file:
-	# 	go = False
-	# 	line = line.split()
-	# 	if len(line) > 0:
-	# 		if body:
-	# 			if len(line) != 2 or line[0] != 'page':
-	# 				go = True
-	# 		elif line[0].lower() == 'source:':
-	# 			body = True
+	body = False
+	for line in file:
+		go = False
+		line = line.split()
+		if len(line) > 0:
+			if body:
+				if len(line) != 2 or line[0] != 'page':
+					go = True
+			elif line[0].lower() == 'source:':
+				body = True
 
 	### COMMENT THIS IN IF YOU HAVE NO META DATA TO IGNORE AS DEPICTED IN THE PRECEDING BLOCK
-	for line in file:
-		line = line.split()
-		go = True
+	# for line in file:
+	# 	line = line.split()
+	# 	go = True
 
 		if go:
 			line = ' '.join(line)
@@ -116,7 +115,7 @@ elif extension == 'txt':
 				line = line.replace(l,'')
 			for l in labelMapping:
 				line = line.replace(l,labelMapping[l])
-			# line = line.replace('*','') # ANOTHER HACKY RELIC OF THE ANNOTATION
+			line = line.replace('*','') # ANOTHER HACKY RELIC OF THE ANNOTATION
 			line = line.split()
 
 			### GO THROUGH EACH LINE AND MARK THE START AND END OF ALL NAMED ENTITIES
@@ -138,7 +137,7 @@ elif extension == 'txt':
 			print(' '.join(line))
 
 else:
-	print('ERROR: UNKNOWN FILE EXTENSION')
+	print('ERROR: UNKNOWN EXTENSION')
 	sys.exit()
 
 
