@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import os
+import sys
 import numpy as np
 import optparse
 import itertools
@@ -98,7 +99,7 @@ optparser.add_option(
     type='int', help="Reload the last saved model"
 )
 optparser.add_option(
-    "-E", "--n_epochs", default="10",
+    "-E", "--n_epochs", default="25",
     type='int', help="number of epochs"
 )
 optparser.add_option(
@@ -188,12 +189,19 @@ dico_tags, tag_to_id, id_to_tag = tag_mapping(train_sentences)
 train_data = prepare_dataset(
     train_sentences, word_to_id, char_to_id, tag_to_id, lower
 )
-dev_data = prepare_dataset(
-    dev_sentences, word_to_id, char_to_id, tag_to_id, lower
-)
-test_data = prepare_dataset(
-    test_sentences, word_to_id, char_to_id, tag_to_id, lower
-)
+
+try:
+    os.system('echo "neural model training was successful" > '+model.model_path+'/green_flag.txt')
+    dev_data = prepare_dataset(
+        dev_sentences, word_to_id, char_to_id, tag_to_id, lower
+    )
+    test_data = prepare_dataset(
+        test_sentences, word_to_id, char_to_id, tag_to_id, lower
+    )
+except KeyError:
+    print('NOT ALL LABELS OCCURED IN TRAINING SET. ABORTING TRAINING FOR THIS ROUND.')
+    os.system('rm '+model.model_path+'/green_flag.txt')
+    sys.exit()
 
 print("%i / %i / %i sentences in train / dev / test." % (
     len(train_data), len(dev_data), len(test_data)))
