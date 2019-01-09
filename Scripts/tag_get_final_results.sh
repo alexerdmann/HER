@@ -24,6 +24,7 @@ elif [ $tagger == 'bilstm-crf' ]
 		workingDir=$(pwd)
 		cd ../tagger
 		### get a training set in conll format (dev will be seed, but irrelevant)
+		mkdir dataset
 		cat $workingDir/$seed $workingDir/$alwaysTrain > dataset/train.crf
 		python $workingDir/Scripts/converter.py dataset/train.crf crf conll dataset/train.conll
 		python $workingDir/Scripts/converter.py $workingDir/$seed crf conll dataset/dev.conll
