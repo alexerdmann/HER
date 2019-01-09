@@ -378,7 +378,7 @@ for lines_annotated in add_lines:
 	Results = record_results(train, test, predictions, Results, seed_size, glampleSwitch, name_of_project, preTrained, trainingData, "5", multiple_tests)
 
 # ### RUN THE DATA THROUGH ONE FINAL SET OF ANNOTATIONS
-# os.system('sh Scripts/update_crossValidate_tag_get_final_results.sh '+add_lines[-1]+' Models/RankedSents/fullCorpus.seed-'+seed_size+'.'+sort_method+' Data/Splits/fullCorpus.seed-'+seed_size+'.alwaysTrain Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated Data/Splits/fullCorpus.seed-'+seed_size+'.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt')
+# os.system('sh Scripts/update_crossValidate_tag_get_final_results.sh '+add_lines[-1]+' Models/RankedSents/fullCorpus.seed-'+seed_size+'.'+sort_method+' Data/Splits/fullCorpus.seed-'+seed_size+'.alwaysTrain Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated Data/Splits/fullCorpus.seed-'+seed_size+'.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt crf')
 # os.system('crfsuite tag -m Models/CRF/best_seed.cls Data/Splits/fullCorpus.seed-'+seed_size+'.unannotated.fts > Data/Splits/predictions_from_seed.txt')
 # trainingData += ' & '+add_lines[-1]
 # Results[trainingData] = {}

@@ -145,13 +145,15 @@ python Scripts/cross_validation.py -testable Data/Splits/fullCorpus.seed-$seed_s
 
 *Depending on the chosen* sortMethod *, this script may claim to predict accuracy on yet unannotated texts. This functionality has yet to be completed though so take these numbers with a grain of salt.*
 
-Let's check how the model is doing with just a small seed set to train on. The command below will take a model trained using the best features identified via cross validation and use it to predict labels for the yet un(manually)annotated corpus. It will combine the manually and automatically annotated halves into a single file for your viewing pleasure *Results/fullCorpus.final.txt* and produce a list of all unique entities found in said file *Results/fullCorpus.final-list.txt*. Lastly, all gazatteers, in their present state, will be saved in *Results/Gazatteers/*.
+Let's check how the model is doing with just a small seed set to train on. The command below will take a Conditional Random Field (CRF) model trained using the best features identified via cross validation and use it to predict labels for the yet un(manually)annotated corpus. It will combine the manually and automatically annotated halves into a single file for your viewing pleasure *Results/fullCorpus.final.txt* and produce a list of all unique entities found in said file *Results/fullCorpus.final-list.txt*. Lastly, all gazatteers, in their present state, will be saved in *Results/Gazatteers/*.
 
 ```
 sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt 2> log.txt
 mkdir Results/Gazatteers
-cp Data/Gazatteers/* Results/Gazatteers/.
+cp Data/Gazatteers/* Results/Gazatteers/. crf
 ```
+
+*See Step 6 for a discussion of other supported models besides CRF's and why you might want to use them later on*
 
 Before we move on and improve on these results, let's save them somewhere specific so we can compare to them later.
 
@@ -220,12 +222,17 @@ Then update the model and re-rank the remaining sentences to be manually annotat
 sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt $sortMethod Data/Splits/fullCorpus.seed-$seed_size.unannotated.probs Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod $entities
 ```
 
-INCORPORATE TAGGER CHOICE HERE - EDIT SCRIPTS/TAG_GET_FINAL_RESULTS.SH
-
 Let's check how the model is doing compared to how it was doing last time. 
 
+Now, the first line of the following code specifies that, again, we will be using a CRF architecture for our model. However, you can change the last argument in that line from *crf* to *bilstm-crf* or *cnn-bilstm* to experiment with these two alternative *neural network* architectures (full disclosure, I haven't finished incorporating the CNN-BiLSTM yet, but you BiLSTM-CRF is ready to go). As demonstrated in Erdmann et al. (*under review*), there are two factors affecting whether you should stick with the CRF architecture or adopt the [bilstm-crf](https://arxiv.org/pdf/1603.01360.pdf) or [cnn-bilstm](https://arxiv.org/pdf/1707.05928.pdf) architecture:
+* The intended application of the model you're training
+* The amount of already manually annotated data you are using to train this model
+If you're sole purpose in training this model is to get accurate entity labels for the corpus you've provided, it seems that no neural network will outperform the CRF, however, if you plan to use this model to generalize to other data in the future that was not included in the corpus you provided to HER to do Active Learning on, then you need to consider the second factor, i.e., how much annotation is available for training. If the total annotation you've done so far (including the seed) is 30,000 tokens or less (I'm considering each line in the annotation files to be one token here), the CRF is probably still your best bet. Between 30 and 100,000 tokens, the CNN-BiLSTM is the best architecture. And once you have more than 100,000 tokens manually annotated, the BiLSTM-CRF architecture tends to perform the best.
+
+Considering that, change *crf* to one of the other models if necessary and run the following commands: 
+
 ```
-sh Scripts/tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt
+sh Scripts/tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt crf
 mkdir Results/Gazatteers
 cp Data/Gazatteers/* Results/Gazatteers/.
 ```
