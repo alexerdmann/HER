@@ -224,7 +224,7 @@ sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fu
 
 Let's check how the model is doing compared to how it was doing last time. 
 
-Now, the first line of the following code specifies that, again, we will be using a CRF architecture for our model. However, you can change the last argument in that line from *crf* to *bilstm-crf* or *cnn-bilstm* to experiment with these two alternative *neural network* architectures (full disclosure, I haven't finished incorporating the CNN-BiLSTM yet, but you BiLSTM-CRF is ready to go). As demonstrated in Erdmann et al. (*under review*), there are two factors affecting whether you should stick with the CRF architecture or adopt the [bilstm-crf](https://arxiv.org/pdf/1603.01360.pdf) or [cnn-bilstm](https://arxiv.org/pdf/1707.05928.pdf) architecture:
+Now, the first line of the following code specifies that, again, we will be using a CRF architecture for our model. However, you can change the last argument in that line from *crf* to *bilstm-crf* or *cnn-bilstm* to experiment with these two alternative *neural network* architectures (full disclosure, I haven't finished incorporating the CNN-BiLSTM yet, but you BiLSTM-CRF is ready to go). As demonstrated in Erdmann et al. (*under review*), there are two factors affecting whether you should stick with the CRF architecture or adopt the [BiLSTM-CRF](https://arxiv.org/pdf/1603.01360.pdf) or [CNN-BiLSTM](https://arxiv.org/pdf/1707.05928.pdf) architecture:
 
 * The intended application of the model you're training
 * The amount of already manually annotated data you are using to train this model
