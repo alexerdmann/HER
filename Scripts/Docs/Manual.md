@@ -148,9 +148,9 @@ python Scripts/cross_validation.py -testable Data/Splits/fullCorpus.seed-$seed_s
 Let's check how the model is doing with just a small seed set to train on. The command below will take a Conditional Random Field (CRF) model trained using the best features identified via cross validation and use it to predict labels for the yet un(manually)annotated corpus. It will combine the manually and automatically annotated halves into a single file for your viewing pleasure *Results/fullCorpus.final.txt* and produce a list of all unique entities found in said file *Results/fullCorpus.final-list.txt*. Lastly, all gazatteers, in their present state, will be saved in *Results/Gazatteers/*.
 
 ```
-sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt 2> log.txt
+sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt crf
 mkdir Results/Gazatteers
-cp Data/Gazatteers/* Results/Gazatteers/. crf
+cp Data/Gazatteers/* Results/Gazatteers/.
 ```
 
 *See Step 6 for a discussion of other supported models besides CRF's and why you might want to use them later on*
