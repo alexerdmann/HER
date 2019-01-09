@@ -225,8 +225,10 @@ sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fu
 Let's check how the model is doing compared to how it was doing last time. 
 
 Now, the first line of the following code specifies that, again, we will be using a CRF architecture for our model. However, you can change the last argument in that line from *crf* to *bilstm-crf* or *cnn-bilstm* to experiment with these two alternative *neural network* architectures (full disclosure, I haven't finished incorporating the CNN-BiLSTM yet, but you BiLSTM-CRF is ready to go). As demonstrated in Erdmann et al. (*under review*), there are two factors affecting whether you should stick with the CRF architecture or adopt the [bilstm-crf](https://arxiv.org/pdf/1603.01360.pdf) or [cnn-bilstm](https://arxiv.org/pdf/1707.05928.pdf) architecture:
+
 * The intended application of the model you're training
 * The amount of already manually annotated data you are using to train this model
+
 If you're sole purpose in training this model is to get accurate entity labels for the corpus you've provided, it seems that no neural network will outperform the CRF, however, if you plan to use this model to generalize to other data in the future that was not included in the corpus you provided to HER to do Active Learning on, then you need to consider the second factor, i.e., how much annotation is available for training. If the total annotation you've done so far (including the seed) is 30,000 tokens or less (I'm considering each line in the annotation files to be one token here), the CRF is probably still your best bet. Between 30 and 100,000 tokens, the CNN-BiLSTM is the best architecture. And once you have more than 100,000 tokens manually annotated, the BiLSTM-CRF architecture tends to perform the best.
 
 Considering that, change *crf* to one of the other models if necessary and run the following commands: 
