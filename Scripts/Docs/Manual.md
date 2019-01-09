@@ -199,7 +199,7 @@ The sentences in *Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod* hav
 Upon completing your annotation, sanity check your data again to make sure you made no typos.
 
 ```
-cut -f1 Data/Splits/fullCorpus.seed-$seed_size.seed | sort -u
+cut -f1 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod | sort -u
 ```
 
 If it appears that you made any typos, search for them in the seed file and correct them before updating your gazatteers.
