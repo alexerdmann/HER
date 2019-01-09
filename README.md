@@ -96,7 +96,7 @@ python Scripts/cross_validation.py -testable Data/Splits/fullCorpus.seed-$seed_s
 Train a named entity recognition model on just the seed and use it to predict entities in the rest of the corpus. Save the results so you can evaluate improvement later on in the active learning process as more annotation is completed.
 
 ```
-sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt 2> log.txt
+sh Scripts/tag_get_final_results.sh 0 Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt crf
 mkdir Results/Gazatteers
 cp Data/Gazatteers/* Results/Gazatteers/.
 mkdir Results_seed
@@ -126,7 +126,7 @@ Then you would annotate as much of the file *Models/RankedSents/fullCorpus.seed-
 lines_annotated=5000
 sh Scripts/update_crossValidate_rerank.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt $sortMethod Data/Splits/fullCorpus.seed-$seed_size.unannotated.probs Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod $entities
 python Scripts/update_gazatteers.py Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Gazatteers/*
-sh Scripts/tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt
+sh Scripts/tag_get_final_results.sh $lines_annotated Models/RankedSents/fullCorpus.seed-$seed_size.$sortMethod Data/Splits/fullCorpus.seed-$seed_size.alwaysTrain Data/Splits/fullCorpus.seed-$seed_size.unannotated Data/Splits/fullCorpus.seed-$seed_size.seed Data/Prepared/fullCorpus.txt Data/Splits/fullCorpus.seed-$seed_size.unannotated.pred Results/fullCorpus.final.txt Results/fullCorpus.final-list.txt crf
 mkdir Results/Gazatteers
 cp Data/Gazatteers/* Results/Gazatteers/.
 mkdir Results_seed_plus_5000
@@ -134,6 +134,8 @@ mv Results/* Results_seed_plus_5000
 ```
 
 You can now check out *Results_seed_plus_5000/fullCorpus.final.txt*, *Results_seed_plus_5000/fullCorpus.final-list.txt*, and the files in *Results_seed_plus_5000/Gazatteers/* and compare to the corresponding files in *Results_seed/* to guage performance and improvement. This will help you decide if you want to repeat Step 6 and how many additional lines you should annotate if you do.
+
+For the sake of brevity, we use a CRF-based model for this demo, though you can check the [User Manual](https://github.com/alexerdmann/HER/blob/master/Scripts/Docs/Manual.md) for other supported models which will train slower but could perform better once you've annotated more data.
 
 ### Step 7: Take Off Your Digital Hat And Put On Your Humanist Hat
 
