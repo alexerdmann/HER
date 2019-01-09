@@ -8,6 +8,8 @@ HANDLE HTML FILES IN PREPROCESSING
 
 ADDITIONAL OUTPUT: COMBINE THE FINAL LIST AND THE GAZATTEER
 	i.e., a potentially imperfect but maximal list of in+out corpus NE’s
+	If the gazetteers do not include any entities not encountered during annotation,
+		this will be identical to the final list output 
 
 ALIGN OUTPUT BACK TO PREPARED INPUT AND ADD ID COLUMN
 	id specifies at which step each word was annotated
