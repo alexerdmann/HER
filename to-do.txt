@@ -1,6 +1,6 @@
 ALTER PREPROCESSING STEP to be less hacky and to preserve features, not just labels
-		i.e., metadata from the OCR output html or previously existing linguistic analysis
-		The issue is analyzers and disambiguators will apply their own tokenization which will have to be aligned
+	i.e., metadata from the OCR output html or previously existing linguistic analysis
+	The issue is analyzers and disambiguators will apply their own tokenization which will have to be aligned
 
 SCRIPT TO MAP OUTPUT BACK TO ORIGINAL RAW INPUT .TXT OR .XML FILES
 
