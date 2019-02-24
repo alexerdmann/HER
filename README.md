@@ -16,7 +16,7 @@ The following outlines the active learning process using Her:
 
 ## Quick Start Demo
 
-This limited demo shows you how to identify geographical place names in a sample corpus of French texts extracted from [FranText](https://www.frantext.fr). To address the wide range of use cases for which HER is designed–including corpora with previously existing partial annotation, presence or lack of gazetteers, diverse orthographies, non-traditional labels, etc.–and for more information regarding data/annotation formatting, **please consult the relevant sections of the [User Manual](https://github.com/alexerdmann/HER/blob/master/Scripts/Docs/Manual.md), which assumes minimal to no computational background from readers**.
+This limited demo shows you how to identify geographical place names in a sample corpus of French texts extracted from [FranText](https://www.frantext.fr). To address the wider range of use cases for which HER is designed——including corpora with previously existing partial annotation, presence or lack of gazetteers, diverse orthographies, non-traditional labels, etc.——and for more information regarding data/annotation formatting, **please consult the relevant sections of the [User Manual](https://github.com/alexerdmann/HER/blob/master/Scripts/Docs/Manual.md), which, unlike this demo, assumes minimal to no computational background from users**.
 
 ### Step 0: Set Up
 
