@@ -4,7 +4,7 @@ HER is an easy-to-use, active learning tool designed to help Digital Humanists e
 
 ## Overview
 
-The following outlines the active learning process using Her:
+The following outlines the active learning process using HER:
 
 * You give HER all relevant texts and define the types of entities you want to identify in said texts
 * HER prompts you to annotate these types of entities in a small *seed* sample text
