@@ -145,6 +145,6 @@ If you find HER useful, please cite our forthcoming publication:
 
 You may also be interested in the previous work upon which HER builds:
 
-* Alexander Erdmann, Christopher Brown, Brian Joseph, Mark Janse, Petra Ajaka, Micha Elsner, Marie-Catherine de Marneffe. 2016. “[Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012).” In *Pro- ceedings of the Language Technologies for the Digital Humanities Workshop* in conjunction with *The 26th International Conference on Computational Linguistics (COLING 2016)*. Osaka, Japan.
+* Alexander Erdmann, Christopher Brown, Brian Joseph, Mark Janse, Petra Ajaka, Micha Elsner, Marie-Catherine de Marneffe. 2016. “[Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012).” In *Proceedings of the Language Technologies for the Digital Humanities Workshop* in conjunction with *The 26th International Conference on Computational Linguistics (COLING 2016)*. Osaka, Japan.
 
 Please contact Alex Erdmann (ae1541@nyu.edu) with any questions, bug fixes, or dating advice.
