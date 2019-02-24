@@ -147,7 +147,7 @@ HER is under continuous development supported by the [Herodotos Project](https:/
 
 If you find HER useful, please cite our forthcoming publication:
 
-* Alexander Erdmann, David Joseph Wrisley, Benjamin Allen, Christopher Brown, Sophie Cohen Bodénès, Micha Elsner, Yukun Feng, Brian Joseph, Béatrice Joyeaux-Prunel and Marie-Catherine de Marneffe. 2019. “[Practical, Efficient, and Customizable Active Learning for Named Entity Recognition in the Digital Humanities](http://www.aclweb.org/anthology/W16-4012).” In *Proceedings of North American Association of Computational Linguistics (NAACL 2019)*. Minneapolis, Minnesota.
+* Alexander Erdmann, David Joseph Wrisley, Benjamin Allen, Christopher Brown, Sophie Cohen Bodénès, Micha Elsner, Yukun Feng, Brian Joseph, Béatrice Joyeaux-Prunel and Marie-Catherine de Marneffe. 2019. “[Practical, Efficient, and Customizable Active Learning for Named Entity Recognition in the Digital Humanities](https://github.com/alexerdmann/HER/blob/master/HER_NAACL2019_preprint.pdf).” In *Proceedings of North American Association of Computational Linguistics (NAACL 2019)*. Minneapolis, Minnesota.
 
 You may also be interested in the previous work which HER builds upon:
 
