@@ -1,6 +1,6 @@
 # HER: Humanities Entity Recognizer
 
-HER is an easy-to-use, active learning tool designed to help Digital Humanists efficiently and effectively automate the identification of entities like persons or places in large text corpora. It robustly handles different types of entities, different languages, styles, and domains, and varying levels of structure in texts.
+HER is an easy-to-use, active learning tool designed to help Digital Humanists efficiently and effectively automate the identification of entities like persons or places in large text corpora. It offers a *whitebox* solution for robust handling of different types of entities, different languages, styles, and domains, and varying levels of structure in texts.
 
 ## Overview
 
@@ -14,15 +14,11 @@ The following outlines the active learning process using Her:
 * Based on said quality, you decide if your manual labor seems more valuably spent annotating more sentences or post editing said outputs
 * Once you're happy with the quality of HER's predicted entity labels, you can use your fully labeled corpus for whatever application you had in mind.
 
-## User Manual
-
-HER is designed to suit a wide range of use cases, including corpora with previously existing partial annotation, presence or lack of gazetteers, diverse orthographies, non-traditional labels, *inter alia*. To address all such use cases and for more information concerning formatting of data/annotation, **it is necessary to consult relevant sections of the [User Manual](https://github.com/alexerdmann/HER/blob/master/Scripts/Docs/Manual.md)**.
-
-The Quick Start Demo below is simply a black boxy preview. To truly get the most out of HER's white box tool set, you'll have to do a bit of reading. But, good news is, whether you're more digital or more humanist, you should be able to make sense of the manual, as I try not to assume any specific background knowledge.
-
 ## Quick Start Demo
 
-This demo shows you how to identify geographical place names in a sample corpus of French texts extracted from [FranText](https://www.frantext.fr).
+This limited demo shows you how to identify geographical place names in a sample corpus of French texts extracted from [FranText](https://www.frantext.fr).
+
+To address the wide range of use cases for which HER is designed---including corpora with previously existing partial annotation, presence or lack of gazetteers, diverse orthographies, non-traditional labels, etc.---and for more information regarding data/annotation formatting, **please consult the relevant sections of the [User Manual](https://github.com/alexerdmann/HER/blob/master/Scripts/Docs/Manual.md), which assumes minimal to no computational background from readers**.
 
 ### Step 0: Set Up
 
@@ -149,8 +145,8 @@ If you find HER useful, please cite our forthcoming publication:
 
 * Alexander Erdmann, David Joseph Wrisley, Benjamin Allen, Christopher Brown, Sophie Cohen Bodénès, Micha Elsner, Yukun Feng, Brian Joseph, Béatrice Joyeaux-Prunel and Marie-Catherine de Marneffe. 2019. “[Practical, Efficient, and Customizable Active Learning for Named Entity Recognition in the Digital Humanities](https://github.com/alexerdmann/HER/blob/master/HER_NAACL2019_preprint.pdf).” In *Proceedings of North American Association of Computational Linguistics (NAACL 2019)*. Minneapolis, Minnesota.
 
-You may also be interested in the previous work which HER builds upon:
+You may also be interested in the previous work upon which HER builds:
 
 * Alexander Erdmann, Christopher Brown, Brian Joseph, Mark Janse, Petra Ajaka, Micha Elsner, Marie-Catherine de Marneffe. 2016. “[Challenges and Solutions for Latin Named Entity Recognition](http://www.aclweb.org/anthology/W16-4012).” In *Pro- ceedings of the Language Technologies for the Digital Humanities Workshop* in conjunction with *The 26th International Conference on Computational Linguistics (COLING 2016)*. Osaka, Japan.
 
-*Please contact Alex Erdmann (ae1541@nyu.edu) with any questions, bug fixes, or dating advice.*
+Please contact Alex Erdmann (ae1541@nyu.edu) with any questions, bug fixes, or dating advice.
