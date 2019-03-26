@@ -250,7 +250,27 @@ Consider how much improvement you've gotten since last time relative to the amou
 
 Otherwise, repeat Step 6 as needed.
 
-### Step 7: Take Off Your Digital Hat And Put On Your Humanist Hat
+### Step 7: Applying the Trained Model
+
+The final tagged corpus and final list of named entities are aggregate over the entire corpus you provided at the beginning and sentences/entities are not listed in any particular order. To project the named entity labels directly onto the individual texts making up your corpus, run the command below. The tagged individual texts will be placed into *Data/Prepared/* and they will all have the extension *.tagged*.
+
+```
+python Scripts/project_tags.py Results_seed_plus_[sum-of-all-lines-annotated_after_the_seed]/fullCorpus.final.txt Data/Prepared/*
+```
+
+It may also be desirable to use your trained model to tag new texts later on that were not part of your original corpus. You can re-use your tagger at any time to label named entities in a new text with the commands below. Just specify what new text you want to tag, whether you used the crf or bilstm-crf tagger architecture, and where that trained model is located, as demonstrated. For crf, the model will, by default, be located at *Models/CRF/best_seed.cls*, whereas the trained bilstm-crf model is stored by default at *../tagger/models/MyModel/*.
+
+```
+new_text=[path_to_text_you_want_to_tag]
+architecture=[either_crf_or_bilstm-crf]
+model=[either_Models/CRF/best_seed.cls_or_../tagger/models/MyModel/]
+
+python Scripts/tag_text_outside_fullCorpus.py $model $new_text $lg $architecture Data/Prepared/fullCorpus.txt Models/CRF/best_seed.featSet
+```
+
+Running these commands will create a new director *Data/External/* containing a preprocessed version of your new text along with a file with the extension *.aligned* which has been tagged by your trained tagger. Another file with the extension *.list* contains all the unique named entities that the tagger discovered in your new text.
+
+### Step 8: Take Off Your Digital Hat And Put On Your Humanist Hat
 
 Regardless of how much post editing lies in your future, I hope HER has served you well and the output of this process has facilitated your project goals. Godspeed!
 
