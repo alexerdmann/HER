@@ -161,6 +161,10 @@ if '-identify_best_feats' in sys.argv:
 		if alwaysTrain == None:
 			alwaysTrain = 'None'
 		os.system('sh Scripts/getFeatures_train.sh '+testable+' '+unannotated+' '+fullCorpus+' '+'_'.join(bestSet)+' '+testable+'.fts'+' '+unannotated+'.fts'+' '+modelLocation+' '+alwaysTrain)
+		# write out best feature set
+		fs = open('Models/CRF/best_seed.featSet', 'w')
+		fs.write('_'.join(bestSet))
+		fs.close()
 
 		print('\n_________________________________')
 		print('BEST FEATURE SET:\n\t{} ({}%)'.format('_'.join(bestSet),str(round(100*bestScore,2))))
