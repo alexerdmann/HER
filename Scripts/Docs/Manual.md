@@ -250,7 +250,7 @@ Consider how much improvement you've gotten since last time relative to the amou
 
 Otherwise, repeat Step 6 as needed.
 
-### Step 7: Applying the Trained Model
+### Step 7: Apply the Trained Model
 
 The final tagged corpus and final list of named entities are aggregate over the entire corpus you provided at the beginning and sentences/entities are not listed in any particular order. To project the named entity labels directly onto the individual texts making up your corpus, run the command below. The tagged individual texts will be placed into *Data/Prepared/* and they will all have the extension *.tagged*.
 
