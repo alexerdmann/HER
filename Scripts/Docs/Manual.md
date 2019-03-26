@@ -258,6 +258,12 @@ The final tagged corpus and final list of named entities are aggregate over the 
 python Scripts/project_tags.py Results_seed_plus_[sum-of-all-lines-annotated_after_the_seed]/fullCorpus.final.txt Data/Prepared/*
 ```
 
+If you want to get a list of unique named entities found in every individual text from your corpus, you can follow the above command with the following one, which generates files in the same *Data/Prepared/* directory ending in the extension *.list* containing the relevant lists.
+
+```
+for f in Data/Prepared/*.tagged; do python Scripts/get_NE_list.py $f > $f.list; done
+```
+
 It may also be desirable to use your trained model to tag new texts later on that were not part of your original corpus. You can re-use your tagger at any time to label named entities in a new text with the commands below. Just specify what new text you want to tag, whether you used the crf or bilstm-crf tagger architecture, and where that trained model is located, as demonstrated. For crf, the model will, by default, be located at *Models/CRF/best_seed.cls*, whereas the trained bilstm-crf model is stored by default at *../tagger/models/MyModel/*.
 
 ```
